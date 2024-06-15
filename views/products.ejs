@@ -1,0 +1,14 @@
+<% layout('layout') %>
+<% title = 'Products' %>
+
+<h1>Our Products</h1>
+<div id="products-list" class="grid-container">
+    <% products.forEach(product => { %>
+        <div class="product">
+            <img src="<%= product.productImage %>" alt="<%= product.productName %>">
+            <h3><%= product.productName %></h3>
+            <p><%= product.productDescription %></p>
+            <p><%= product.productPrice %></p>
+        </div>
+    <% }) %>
+</div>

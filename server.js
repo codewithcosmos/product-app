@@ -1,39 +1,82 @@
-// Import necessary modules
 const express = require('express');
+const path = require('path');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 require('dotenv').config();
+const seedProducts = require('./seed');
+const Product = require('./models/Product');
 
-// Initialize express app
 const app = express();
+const port = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
+app.set('view engine', 'ejs');
 
 // Database connection
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => console.log('MongoDB connected'))
-    .catch(err => console.log(err));
-
-// Define a simple product schema and model
-const productSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    price: { type: Number, required: true },
-    description: String,
-    inStock: { type: Boolean, default: true }
-});
-
-const Product = mongoose.model('Product', productSchema);
+mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/webdev-services', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+}).then(() => {
+    console.log('MongoDB connected');
+    // Seed the database
+    seedProducts();
+}).catch(err => console.log(err));
 
 // Routes
 app.get('/', (req, res) => {
-    res.send('Welcome to the product API');
+    res.render('index', { title: 'Home' });
 });
 
-// Get all products
 app.get('/products', async (req, res) => {
+    try {
+        const products = await Product.find();
+        res.render('products', { title: 'Products', products });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+app.get('/cart', (req, res) => {
+    res.render('cart', { title: 'Cart' });
+});
+
+app.get('/quote', (req, res) => {
+    res.render('quote', { title: 'Request a Quote' });
+});
+
+app.get('/invoice', (req, res) => {
+    res.render('invoice', { title: 'Invoice' });
+});
+
+// Admin routes
+app.get('/admin/login', (req, res) => {
+    res.render('admin/login', { title: 'Admin Login' });
+});
+
+app.get('/admin/dashboard', (req, res) => {
+    res.render('admin/dashboard', { title: 'Admin Dashboard', adminName: 'Admin' });
+});
+
+app.get('/admin/products', async (req, res) => {
+    try {
+        const products = await Product.find();
+        res.render('admin/products', { title: 'Manage Products', products });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+app.get('/admin/orders', (req, res) => {
+    res.render('admin/orders', { title: 'Manage Orders' });
+});
+
+// REST API Endpoints
+app.get('/api/products', async (req, res) => {
     try {
         const products = await Product.find();
         res.json(products);
@@ -42,8 +85,7 @@ app.get('/products', async (req, res) => {
     }
 });
 
-// Get a specific product
-app.get('/products/:id', async (req, res) => {
+app.get('/api/products/:id', async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
         if (product == null) {
@@ -55,8 +97,7 @@ app.get('/products/:id', async (req, res) => {
     }
 });
 
-// Create a new product
-app.post('/products', async (req, res) => {
+app.post('/api/products', async (req, res) => {
     const product = new Product({
         name: req.body.name,
         price: req.body.price,
@@ -72,8 +113,7 @@ app.post('/products', async (req, res) => {
     }
 });
 
-// Update a product
-app.patch('/products/:id', async (req, res) => {
+app.patch('/api/products/:id', async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
         if (product == null) {
@@ -100,8 +140,7 @@ app.patch('/products/:id', async (req, res) => {
     }
 });
 
-// Delete a product
-app.delete('/products/:id', async (req, res) => {
+app.delete('/api/products/:id', async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
         if (product == null) {
@@ -116,7 +155,6 @@ app.delete('/products/:id', async (req, res) => {
 });
 
 // Start the server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
 });
