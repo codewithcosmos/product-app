@@ -1,14 +1,36 @@
-<% layout('layout') %>
-<% title = 'Products' %>
+<!-- views/products.ejs -->
 
-<h1>Our Products</h1>
-<div id="products-list" class="grid-container">
-    <% products.forEach(product => { %>
-        <div class="product">
-            <img src="<%= product.productImage %>" alt="<%= product.productName %>">
-            <h3><%= product.productName %></h3>
-            <p><%= product.productDescription %></p>
-            <p><%= product.productPrice %></p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products</title>
+    <!-- Link to your CSS file -->
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <!-- Include your navbar -->
+    <% include ./partials/navbar %>
+
+    <div class="container">
+        <h1>Our Products</h1>
+        <div class="products">
+            <% products.forEach(product => { %>
+                <div class="product">
+                    <img src="/images/<%= product.image %>" alt="<%= product.name %>">
+                    <h2><%= product.name %></h2>
+                    <p><%= product.description %></p>
+                    <!-- Display price in Rand (R) -->
+                    <p>Price: R <%= product.price.toLocaleString('en-ZA') %></p>
+                    <!-- Add to cart button or link -->
+                    <a href="/cart/add/<%= product._id %>">Add to Cart</a>
+                </div>
+            <% }); %>
         </div>
-    <% }) %>
-</div>
+    </div>
+
+    <!-- Include your footer -->
+    <% include ./partials/footer %>
+</body>
+</html>
