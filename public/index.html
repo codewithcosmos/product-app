@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Full-Stack Application Demo</title>
+    <title>Kasiwebsites</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="js/scripts.js"></script>
 </head>
 <body>
     <header id="main-header">
         <div class="container">
-            <h1>Full-Stack Application Demo</h1>
+            <h1>Kasiwebsites </h1>
             <nav>
                 <ul>
                     <li><a href="#">Home</a></li>
@@ -69,21 +70,23 @@
         <div class="container">
             <div class="footer-content">
                 <div class="social-icons">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://www.facebook.com/Kasiwebsites" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://wwww.twitter.com/coslife_m" target="_blank"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.github.com/codewithcosmos" target="_blank"><i class="fab fa-github"></i></a>
+                    <a href="https://www.linkedin.com/in/coslifem" target="_blank"><i class="fab fa-linkedin-in"></i></a>
                 </div>
-                <p>&copy; 2024 | Kasiwebsites | All rights reserved.</p>
+                <p>&copy; 2024 Kasiwebsites | All rights reserved.</p>
             </div>
             <a href="#" class="page-up"><i class="fas fa-chevron-up"></i></a>
         </div>
     </footer>
 
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="js/scripts.js"></script>
     <script src="js/cart.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/admin.js"></script>
+    <script src="js/seed.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async function() {
             // Fetch and display products
@@ -91,7 +94,7 @@
                 const response = await axios.get('/api/products');
                 const products = response.data;
                 const productListDiv = document.getElementById('product-list');
-
+    
                 products.forEach(product => {
                     const productDiv = document.createElement('div');
                     productDiv.classList.add('product');
@@ -99,7 +102,7 @@
                         <img src="images/${product.imageUrl}" alt="${product.name}">
                         <h3>${product.name}</h3>
                         <p>${product.description}</p>
-                        <p>$${product.price}</p>
+                        <p>Price: R ${formatPriceInRands(product.price)}</p>
                         <button class="add-to-cart" data-product-id="${product._id}">Add to Cart</button>
                     `;
                     productListDiv.appendChild(productDiv);
@@ -107,7 +110,7 @@
             } catch (error) {
                 console.error('Error fetching products:', error);
             }
-
+    
             // Fetch and display cart items
             try {
                 const response = await axios.get('/api/cart', {
@@ -117,7 +120,7 @@
                 });
                 const cartItems = response.data.products;
                 const cartItemsDiv = document.getElementById('cart-items');
-
+    
                 cartItems.forEach(item => {
                     const itemDiv = document.createElement('div');
                     itemDiv.classList.add('cart-item');
@@ -130,13 +133,21 @@
             } catch (error) {
                 console.error('Error fetching cart items:', error);
             }
-
+    
             // Handle checkout button click
             document.getElementById('checkout-btn').addEventListener('click', async function() {
                 // Implement checkout logic here
                 alert('Checkout functionality will be implemented here.');
             });
+    
+            // Function to format price in Rands
+            function formatPriceInRands(price) {
+                return `${price.toLocaleString('en-ZA')}`; // Format as Rands with locale
+            }
         });
     </script>
+    
+    
+    
 </body>
 </html>

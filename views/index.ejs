@@ -1,5 +1,59 @@
-<% layout('layout') %>
-<% title = 'Home' %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Product App</title>
+    <!-- Link to your CSS file -->
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <!-- Include your header/navbar if applicable -->
+    <header>
+        <h1>Welcome to Product App</h1>
+        <!-- Navigation links -->
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/products">Products</a></li>
+                <!-- Add more navigation links as needed -->
+            </ul>
+        </nav>
+    </header>
 
-<h1>Welcome to Our Web Development Services</h1>
-<p>We provide top-notch web design, development, and SEO services.</p>
+    <main>
+        <h2>Featured Products</h2>
+        
+        <% products.forEach(product => { %>
+            <div class="product">
+                <img src="/images/<%= product.image %>" alt="<%= product.name %>">
+                <h3><%= product.name %></h3>
+                <p><%= product.description %></p>
+                <!-- Display price in Rand (R) -->
+                <p>Price: R <%= product.price.toLocaleString('en-ZA') %></p>
+                <!-- Add to cart form -->
+                <form action="/cart/add/<%= product._id %>" method="POST">
+                    <button type="submit">Add to Cart</button>
+                </form>
+            </div>
+        <% }); %>
+
+    </main>
+
+    <!-- Include your footer -->
+    <footer>
+        <p>&copy; 2024 Your Company</p>
+        <!-- Social media icons or links -->
+        <ul class="social-icons">
+            <li><a href="#"><img src="/images/facebook.png" alt="Facebook"></a></li>
+            <li><a href="#"><img src="/images/twitter.png" alt="Twitter"></a></li>
+            <!-- Add more social icons as needed -->
+        </ul>
+        <!-- Back to top button -->
+        <a href="#top">Back to Top</a>
+    </footer>
+
+    <!-- JavaScript scripts if needed -->
+    <!-- Example: <script src="/js/main.js"></script> -->
+</body>
+</html>

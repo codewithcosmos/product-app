@@ -1,5 +1,106 @@
-<% layout('layout') %>
-<% title = 'Cart' %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        /* Additional styles for the cart page */
+        .cart {
+            margin: 20px auto;
+            max-width: 600px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
 
-<h1>Your Cart</h1>
-<!-- Cart content will go here -->
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .cart-item img {
+            max-width: 100px;
+            max-height: 100px;
+            margin-right: 20px;
+        }
+
+        .cart-total {
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: right;
+            margin-top: 20px;
+        }
+
+        .checkout-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            text-align: center;
+            text-decoration: none;
+            border: none;
+            border-radius: 5px;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .checkout-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Shopping Cart</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/products">Products</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="cart">
+        <h2>Your Cart</h2>
+        
+        <% if (cart.length === 0) { %>
+            <p>Your cart is empty.</p>
+        <% } else { %>
+            <% cart.forEach(item => { %>
+                <div class="cart-item">
+                    <img src="/images/<%= item.image %>" alt="<%= item.name %>">
+                    <div>
+                        <h3><%= item.name %></h3>
+                        <p><%= item.description %></p>
+                        <p>Price: R <%= item.price.toLocaleString('en-ZA') %></p>
+                    </div>
+                    <form action="/cart/remove/<%= item._id %>" method="POST">
+                        <button type="submit">Remove</button>
+                    </form>
+                </div>
+            <% }); %>
+            <div class="cart-total">
+                <p>Total: R <%= total.toLocaleString('en-ZA') %></p>
+            </div>
+            <a href="/checkout" class="checkout-btn">Proceed to Checkout</a>
+        <% } %>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Your Company</p>
+        <ul class="social-icons">
+            <li><a href="#"><img src="/images/facebook.png" alt="Facebook"></a></li>
+            <li><a href="#"><img src="/images/twitter.png" alt="Twitter"></a></li>
+        </ul>
+        <a href="#top">Back to Top</a>
+    </footer>
+</body>
+</html>
