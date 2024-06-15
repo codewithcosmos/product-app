@@ -1,59 +1,20 @@
+/* styles.css */
+
 /* Reset and Global Styles */
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed, 
-figure, figcaption, footer, header, hgroup, 
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
+* {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    border: 0;
-    font: inherit;
-    vertical-align: baseline;
-}
-
-/* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure, 
-footer, header, hgroup, menu, nav, section {
-    display: block;
 }
 
 body {
-    line-height: 1.6;
     font-family: Arial, sans-serif;
+    line-height: 1.6;
     background-color: #f0f0f0;
     margin: 0;
     padding: 0;
-    color: #333;
 }
 
-a {
-    text-decoration: none;
-    color: inherit;
-}
-
-ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-}
-
-button {
-    cursor: pointer;
-    border: none;
-    background-color: transparent;
-    padding: 0;
-    margin: 0;
-}
-
-/* Container */
 .container {
     width: 90%;
     margin: auto;
@@ -79,26 +40,23 @@ button {
 }
 
 nav ul {
-    display: flex;
     list-style-type: none;
     margin: 0;
     padding: 0;
 }
 
 nav ul li {
+    display: inline;
     margin-left: 10px;
 }
 
 nav ul li a {
     color: #fff;
-    padding: 10px;
-    transition: background-color 0.3s ease;
+    text-decoration: none;
 }
 
 nav ul li a:hover {
-    background-color: #555;
-    text-decoration: none;
-    border-radius: 5px;
+    text-decoration: underline;
 }
 
 /* Main Sections */
@@ -114,56 +72,14 @@ section h2 {
     margin-bottom: 10px;
 }
 
-/* Footer */
-footer {
-    background-color: #333;
-    color: #fff;
-    padding: 10px 0;
-    text-align: center;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    z-index: 1000; /* Optional: Adjust z-index if needed */
-}
-
-.footer-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 90%;
-    margin: 0 auto;
-}
-
-.social-icons a {
-    color: #fff;
-    font-size: 24px;
-    margin-right: 10px;
-    transition: color 0.3s ease;
-}
-
-.social-icons a:hover {
-    color: #bbb;
-}
-
-.page-up {
-    color: #fff;
-    font-size: 24px;
-    transition: color 0.3s ease;
-}
-
-.page-up:hover {
-    color: #bbb;
-}
-
-
-/* Additional Styles */
+/* Product Listing */
 .grid-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
+    grid-gap: 20px;
 }
 
-.product, .cart-item {
+.product {
     background-color: #fff;
     padding: 20px;
     border-radius: 5px;
@@ -179,23 +95,64 @@ footer {
     margin-top: 10px;
 }
 
-.product p, .cart-item p {
+.product p {
     margin-bottom: 10px;
 }
 
-.product button, #checkout-btn {
+.product button {
     background-color: #333;
     color: #fff;
+    border: none;
     padding: 10px 20px;
+    cursor: pointer;
     border-radius: 5px;
     text-transform: uppercase;
-    transition: background-color 0.3s ease;
 }
 
-.product button:hover, #checkout-btn:hover {
+.product button:hover {
     background-color: #555;
 }
 
+/* Cart Section */
+#cart {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#cart-items {
+    margin-top: 10px;
+}
+
+.cart-item {
+    background-color: #fff;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.cart-item p {
+    margin-bottom: 5px;
+}
+
+#checkout-btn {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    text-transform: uppercase;
+    margin-top: 10px;
+}
+
+#checkout-btn:hover {
+    background-color: #555;
+}
+
+/* Login Section */
 #login {
     max-width: 400px;
     margin: 0 auto;
@@ -230,19 +187,43 @@ footer {
 #login-form button:hover {
     background-color: #555;
 }
+/* Footer */
+footer {
+    background-color: #333;
+    color: #fff;
+    padding: 20px 0;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 1000; /* Optional: Adjust z-index if needed */
+}
 
-/* Media Queries */
-@media (max-width: 768px) {
-    .container {
-        width: 95%;
-    }
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 90%;
+    margin: 0 auto;
+}
 
-    .footer-content {
-        flex-direction: column;
-        align-items: center;
-    }
+.social-icons a {
+    color: #fff;
+    font-size: 24px;
+    margin-right: 10px;
+    transition: color 0.3s ease;
+}
 
-    .social-icons {
-        margin-bottom: 10px;
-    }
+.social-icons a:hover {
+    color: #bbb;
+}
+
+.page-up {
+    color: #fff;
+    font-size: 24px;
+    transition: color 0.3s ease;
+}
+
+.page-up:hover {
+    color: #bbb;
 }
