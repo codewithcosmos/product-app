@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full-Stack Application Demo</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <header id="main-header">
+        <div class="container">
+            <h1>Full-Stack Application Demo</h1>
+            <nav>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Products</a></li>
+                    <li><a href="#">Cart</a></li>
+                    <li><a href="#">Login</a></li>
+                    <li><a href="#">Admin Dashboard</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section id="products">
+            <div class="container">
+                <h2>Products</h2>
+                <div id="product-list" class="grid-container">
+                    <!-- Product items will be dynamically loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <section id="cart">
+            <div class="container">
+                <h2>Cart</h2>
+                <div id="cart-items" class="grid-container">
+                    <!-- Cart items will be dynamically loaded here -->
+                </div>
+                <button id="checkout-btn">Checkout</button>
+            </div>
+        </section>
+
+        <section id="login">
+            <div class="container">
+                <h2>Login</h2>
+                <form id="login-form">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
+                    <button type="submit">Login</button>
+                </form>
+            </div>
+        </section>
+
+        <section id="admin-dashboard">
+            <div class="container">
+                <h2>Admin Dashboard</h2>
+                <button id="generate-invoice">Generate Invoice</button>
+                <button id="send-invoice">Send Invoice via Email</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+                <p>&copy; 2024 | Kasiwebsites | All rights reserved.</p>
+            </div>
+            <a href="#" class="page-up"><i class="fas fa-chevron-up"></i></a>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/admin.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Fetch and display products
+            try {
+                const response = await axios.get('/api/products');
+                const products = response.data;
+                const productListDiv = document.getElementById('product-list');
+
+                products.forEach(product => {
+                    const productDiv = document.createElement('div');
+                    productDiv.classList.add('product');
+                    productDiv.innerHTML = `
+                        <img src="images/${product.imageUrl}" alt="${product.name}">
+                        <h3>${product.name}</h3>
+                        <p>${product.description}</p>
+                        <p>$${product.price}</p>
+                        <button class="add-to-cart" data-product-id="${product._id}">Add to Cart</button>
+                    `;
+                    productListDiv.appendChild(productDiv);
+                });
+            } catch (error) {
+                console.error('Error fetching products:', error);
+            }
+
+            // Fetch and display cart items
+            try {
+                const response = await axios.get('/api/cart', {
+                    headers: {
+                        'Authorization': localStorage.getItem('token')
+                    }
+                });
+                const cartItems = response.data.products;
+                const cartItemsDiv = document.getElementById('cart-items');
+
+                cartItems.forEach(item => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.classList.add('cart-item');
+                    itemDiv.innerHTML = `
+                        <p>${item.product.name}</p>
+                        <p>Quantity: ${item.quantity}</p>
+                    `;
+                    cartItemsDiv.appendChild(itemDiv);
+                });
+            } catch (error) {
+                console.error('Error fetching cart items:', error);
+            }
+
+            // Handle checkout button click
+            document.getElementById('checkout-btn').addEventListener('click', async function() {
+                // Implement checkout logic here
+                alert('Checkout functionality will be implemented here.');
+            });
+        });
+    </script>
+</body>
+</html>
