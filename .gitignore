@@ -1,0 +1,99 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment Variables
+.env
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Debugging and testing files
+.DS_Store
+*.swp
+*.swo
+.vscode/
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# Environment configuration
+.env
+.env.test
+.env.production
+
+# Optional eslint cache
+.eslintcache
+
+# Optional stylelint cache
+.stylelintcache
+
+# Mac OS metadata
+.DS_Store
+
+# IDE specific files
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Build directories
+dist/
+build/
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# Temporary files
+tmp/
+temp/
+
+# Ignore all generated files by various editors and OS
+Thumbs.db
+ehthumbs.db
+
+# Ignore Minified JS files
+*.min.js
+
+# Ignore Gulp Cache
+.gulp/
+
+# Ignore Parcel cache
+.cache/
+
+# Ignore next.js build output
+.next/
+
+# Ignore Nuxt.js build output
+.nuxt/
+
+# Ignore Sapper build output
+__sapper__/
+
+# Ignore Gridsome build output
+.gridsome/
+
+# SvelteKit build output
+.svelte-kit/
+
+# Ignore 11ty build output
+._site/
+
+# Ignore Eleventy build output
+_site/
