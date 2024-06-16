@@ -18,7 +18,7 @@ body {
 .container {
     width: 90%;
     margin: auto;
-    padding: 20px 0;
+    padding: 10px 0;
 }
 
 /* Header */
@@ -80,6 +80,10 @@ section h2 {
     grid-gap: 20px;
 }
 
+#product {
+    padding-top: 250px;
+}
+
 .product {
     background-color: #fff;
     padding: 20px;
@@ -119,7 +123,7 @@ section h2 {
     background-color: #f9f9f9;
     padding: 20px;
     border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
 #cart-items {
@@ -150,7 +154,8 @@ section h2 {
 }
 
 #checkout-btn:hover {
-    background-color: #555;
+    background: #c2c0c0;
+    color: #000000;
 }
 
 /* Login Section */
@@ -162,7 +167,7 @@ section h2 {
     margin: 20px;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    padding-bottom: 100px;
+    padding-bottom: 50px;
     float: right;
 }
 
@@ -183,6 +188,7 @@ section h2 {
     background-color: #333;
     color: #fff;
     padding: 10px 20px;
+    margin: 20px 0;
     cursor: pointer;
     border-radius: 5px;
     text-transform: uppercase;
@@ -193,19 +199,26 @@ section h2 {
     color: #fff;
     border: none;
     padding: 10px 20px;
+    margin: 20px;
     cursor: pointer;
     border-radius: 5px;
     text-transform: uppercase;
-    margin-top: 10px;
+    margin-top: 20px;
     transition: background-color 0.3s ease;
 }
 
 #send-invoice:hover, #generate-invoice:hover {
-    background-color: #555;
+    background-color: #fff;
+    color: #000000;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+
 }
 
 #login-form button:hover {
-    background-color: #555;
+    background-color: #fff;
+    color: #000000;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+
 }
 /* Footer */
 footer {
@@ -223,8 +236,9 @@ footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    text-align: center;
     max-width: 90%;
-    margin: 0 auto;
+    margin: 10px;
 }
 
 .social-icons a {
@@ -246,5 +260,7 @@ footer {
 }
 
 .page-up:hover {
-    color: #cb0505;
+    color: #20c238;
+    border-radius: 5px;
+
 }
