@@ -5,11 +5,14 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
-require('dotenv').config();
-
+const dotenv = require('dotenv');
 const Product = require('./models/Product');
 const seedProducts = require('./seed');
 const checkoutRouter = require('./routes/checkout'); // Assuming checkoutRouter is defined separately
+const axios = require('axios');
+
+// Load environment variables from .env file
+dotenv.config();
 
 // Initialize express app
 const app = express();
@@ -24,7 +27,7 @@ app.set('view engine', 'ejs');
 
 // Session middleware
 app.use(session({
-    secret: 'your_secret_key', // Replace with your actual secret key
+    secret: process.env.SESSION_SECRET, // Use environment variable for session secret
     resave: false,
     saveUninitialized: true,
     store: new MongoStore({ mongooseConnection: mongoose.connection }),
@@ -37,11 +40,13 @@ mongoose.connect(process.env.MONGO_URI, {
     useUnifiedTopology: true
 }).then(() => {
     console.log('MongoDB connected');
-    // Seed the database
+    // Seed the database on connection
     seedProducts();
-}).catch(err => console.log(err));
+}).catch(err => console.error('MongoDB connection error:', err));
 
 // Routes
+
+// Home route
 app.get('/', async (req, res) => {
     try {
         const products = await Product.find();
@@ -51,6 +56,7 @@ app.get('/', async (req, res) => {
     }
 });
 
+// Products route
 app.get('/products', async (req, res) => {
     try {
         const products = await Product.find();
@@ -61,12 +67,14 @@ app.get('/products', async (req, res) => {
 });
 
 // Cart routes
+
+// Display cart
 app.get('/cart', (req, res) => {
-    // Retrieve cart items from session or database if needed
     const cart = req.session.cart || [];
     res.render('cart', { title: 'Cart', cart });
 });
 
+// Add product to cart
 app.post('/cart/add/:productId', async (req, res) => {
     const productId = req.params.productId;
     try {
@@ -74,7 +82,6 @@ app.post('/cart/add/:productId', async (req, res) => {
         if (!product) {
             return res.status(404).json({ message: 'Product not found' });
         }
-        // Add product to cart in session
         req.session.cart = req.session.cart || [];
         req.session.cart.push(product);
         res.redirect('/cart'); // Redirect to cart page after adding
@@ -83,9 +90,9 @@ app.post('/cart/add/:productId', async (req, res) => {
     }
 });
 
+// Remove product from cart
 app.post('/cart/remove/:productId', (req, res) => {
     const productId = req.params.productId;
-    // Remove product from cart in session
     if (req.session.cart) {
         req.session.cart = req.session.cart.filter(item => item._id !== productId);
     }
@@ -102,6 +109,21 @@ app.get('/admin/login', (req, res) => {
 
 app.get('/admin/dashboard', (req, res) => {
     res.render('admin/dashboard', { title: 'Admin Dashboard', adminName: 'Admin' });
+});
+
+// API endpoint to fetch products (for client-side rendering)
+app.get('/api/products', async (req, res) => {
+    try {
+        const products = await Product.find();
+        res.json(products);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// Client-side rendering of products using Axios (assumed in your original code)
+app.get('/client/products', (req, res) => {
+    res.sendFile(path.join(__dirname, 'client/products.html'));
 });
 
 // Start the server

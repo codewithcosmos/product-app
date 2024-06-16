@@ -153,6 +153,16 @@ app.delete('/api/products/:id', async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 });
+// server.js or app.js
+require('dotenv').config();
+const express = require('express');
+
+// other configurations and middleware
+
+app.listen(3000, () => {
+    console.log('Server running on port 3000');
+});
+
 
 // Start the server
 app.listen(port, () => {
