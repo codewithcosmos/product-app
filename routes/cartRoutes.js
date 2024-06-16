@@ -1,18 +1,42 @@
-// routes/cartRoutes.js
 const express = require('express');
 const router = express.Router();
-const cartController = require('../controllers/cartController');
+const Product = require('../models/Product');
 
-// Assuming you have some middleware to authenticate the user
-const authenticateUser = (req, res, next) => {
-    // Dummy authentication middleware
-    req.user = { id: 'dummyUserId' }; // Replace with actual user id from your authentication logic
-    next();
-};
+// Get cart items
+router.get('/', (req, res) => {
+    const cart = req.session.cart || [];
+    res.json(cart);
+});
 
-router.use(authenticateUser);
+// Add item to cart
+router.post('/add/:productId', async (req, res) => {
+    const productId = req.params.productId;
+    try {
+        const product = await Product.findById(productId);
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+        req.session.cart = req.session.cart || [];
+        req.session.cart.push(product);
+        res.json(req.session.cart); 
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
 
-router.get('/', cartController.getCart);
-router.post('/add', cartController.addToCart);
+// Remove item from cart
+router.post('/remove/:productId', (req, res) => {
+    const productId = req.params.productId;
+    if (req.session.cart) {
+        req.session.cart = req.session.cart.filter(item => item._id.toString() !== productId);
+    }
+    res.json(req.session.cart); 
+});
+
+// Clear the cart
+router.post('/clear', (req, res) => {
+    req.session.cart = [];
+    res.json({ message: 'Cart cleared' });
+});
 
 module.exports = router;

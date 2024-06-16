@@ -1,11 +1,25 @@
 const express = require('express');
-const path = require('path');
 const mongoose = require('mongoose');
+const path = require('path');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-require('dotenv').config();
+const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
+const dotenv = require('dotenv');
+const Product = require('./models/Product');
 const seedProducts = require('./seed');
 const Product = require('./models/Product');
+const checkoutRouter = require('./routes/checkout'); 
+const productRouter = require('./routes/products'); 
+const invoiceRouter = require('./routes/invoiceRoutes'); 
+const quoteRouter = require('./routes/quoteRoutes'); 
+const userRouter = require('./routes/userRoutes'); 
+const adminRouter = require('./routes/adminRoutes'); 
+const cartRouter = require('./routes/cartRoutes'); 
+const axios = require('axios');
+
+dotenv.config();
+
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -28,17 +42,36 @@ mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/webdev-serv
 }).catch(err => console.log(err));
 
 // Routes
-app.get('/', (req, res) => {
-    res.render('index', { title: 'Home' });
-});
+app.use('/api/products', productRouter); 
+app.use('/api/invoices', invoiceRouter); 
+app.use('/api/quotes', quoteRouter); 
+app.use('/api/users', userRouter); 
+app.use('/api/admin', adminRouter); 
+app.use('/api/cart', cartRouter); 
 
-app.get('/products', async (req, res) => {
+// Home route
+app.get('/', async (req, res) => {
     try {
         const products = await Product.find();
-        res.render('products', { title: 'Products', products });
+        res.render('index', { title: 'Home', products });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
+});
+
+// API endpoint to fetch products (for client-side rendering)
+app.get('/api/products', async (req, res) => {
+    try {
+        const products = await Product.find();
+        res.json(products);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// Client-side rendering of products using Axios (assumed in your original code)
+app.get('/client/products', (req, res) => {
+    res.sendFile(path.join(__dirname, 'client/products.html'));
 });
 
 app.get('/cart', (req, res) => {
@@ -155,14 +188,8 @@ app.delete('/api/products/:id', async (req, res) => {
 });
 // server.js or app.js
 require('dotenv').config();
-const express = require('express');
 
 // other configurations and middleware
-
-app.listen(3000, () => {
-    console.log('Server running on port 3000');
-});
-
 
 // Start the server
 app.listen(port, () => {
