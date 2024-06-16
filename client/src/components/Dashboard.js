@@ -1,10 +1,16 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
-const Dashboard = ({ adminName }) => {
+const Dashboard = () => {
     return (
         <div>
-            <h2>Welcome, {adminName}</h2>
-            {/* Dashboard content goes here */}
+            <h2>Admin Dashboard</h2>
+            <Link to="/admin/login">
+                <button>Admin Sign In</button>
+            </Link>
+            <Link to="/admin/signup">
+                <button>Admin Sign Up</button>
+            </Link>
         </div>
     );
 };
