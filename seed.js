@@ -5,7 +5,7 @@ const products = [
         name: 'Basic Website Design',
         productId: 'wd001',
         description: 'A simple website design suitable for small businesses.',
-        price: 50,
+        price: 5000,
         image: '/images/basic-website.jpg', // Adjusted path
         category: 'Web Development'
     },
@@ -13,7 +13,7 @@ const products = [
         name: 'E-commerce Website',
         productId: 'wd002',
         description: 'Full-fledged e-commerce solution with payment integration.',
-        price: 150,
+        price: 15000,
         image: '/images/ecommerce-website.jpg', // Adjusted path
         category: 'Web Development'
     },
@@ -21,7 +21,7 @@ const products = [
         name: 'Custom Web Application',
         productId: 'wd003',
         description: 'Tailored web application development based on specific requirements.',
-        price: 250,
+        price: 25000,
         image: '/images/custom-web-app.jpg', // Adjusted path
         category: 'Web Development'
     },
@@ -29,7 +29,7 @@ const products = [
         name: 'SEO Optimization',
         productId: 'wd004',
         description: 'Improve your website\'s visibility on search engines.',
-        price: 80,
+        price: 8000,
         image: '/images/seo-optimization.jpg', // Adjusted path
         category: 'Marketing'
     },
@@ -37,7 +37,7 @@ const products = [
         name: 'Responsive Web Design',
         productId: 'wd005',
         description: 'Ensures your website looks great on all devices and screen sizes.',
-        price: 60,
+        price: 6000,
         image: '/images/responsive-design.jpg', // Adjusted path
         category: 'Web Development'
     },
@@ -45,7 +45,7 @@ const products = [
         name: 'Web Maintenance',
         productId: 'wd006',
         description: 'Ongoing updates and maintenance for your website.',
-        price: 40,
+        price: 4000,
         image: '/images/web-maintenance.jpg', // Adjusted path
         category: 'Support'
     },
@@ -53,7 +53,7 @@ const products = [
         name: 'Graphic Design',
         productId: 'wd007',
         description: 'Custom graphics and visual content creation for your website.',
-        price: 70,
+        price: 7000,
         image: '/images/graphic-design.jpg', // Adjusted path
         category: 'Design'
     },
@@ -61,7 +61,7 @@ const products = [
         name: 'Hosting Services',
         productId: 'wd008',
         description: 'Reliable hosting solutions for your website.',
-        price: 30,
+        price: 3000,
         image: '/images/hosting-services.jpg', // Adjusted path
         category: 'Hosting'
     },
@@ -69,7 +69,7 @@ const products = [
         name: 'Domain Registration',
         productId: 'wd009',
         description: 'Register your domain name quickly and securely.',
-        price: 10,
+        price: 1000,
         image: '/images/domain-registration.jpg', // Adjusted path
         category: 'Hosting'
     },
@@ -77,7 +77,7 @@ const products = [
         name: 'Company Registration Assistance',
         productId: 'wd010',
         description: 'Guidance and assistance with registering your company online.',
-        price: 50,
+        price: 5000,
         image: '/images/company-registration.jpg', // Adjusted path
         category: 'Consulting'
     },
@@ -85,7 +85,7 @@ const products = [
         name: 'Digital Marketing',
         productId: 'wd011',
         description: 'Promote your business online with effective digital marketing strategies.',
-        price: 120,
+        price: 12000,
         image: '/images/digital-marketing.jpg', // Adjusted path
         category: 'Marketing'
     }
