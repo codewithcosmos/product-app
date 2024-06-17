@@ -1,38 +1,59 @@
-// routes/checkout.js
-
 const express = require('express');
+const Order = require('../models/Order');
+const { sendThankYouEmail } = require('../utils/email');
 const router = express.Router();
 
-// POST route to process checkout
-router.post('/process', async (req, res) => {
-    // Extract form data
-    const { fullname, email, phone, message } = req.body;
+// Checkout
+router.get('/', (req, res) => {
+    res.render('checkout', { title: 'Checkout', cart: req.session.cart || [] });
+});
 
-    // Process the checkout logic (e.g., generate invoice, send confirmation email, etc.)
-
-    // Example: Saving to MongoDB or any other database
+// Complete checkout
+router.post('/', async (req, res) => {
     try {
-        // Save the order details to your database (MongoDB example)
-        // This assumes you have a 'orders' collection in your MongoDB setup
-        await Order.create({
-            fullname,
-            email,
-            phone,
-            message,
-            products: req.session.cart, // Assuming you're using sessions for cart
-            total: req.session.total, // Assuming you're calculating total in the session
-            createdAt: new Date()
+        const { paymentMethod } = req.body;
+        const user = req.session.user;
+
+        const newOrder = new Order({
+            user: user._id,
+            products: req.session.cart.map(item => ({ product: item._id, quantity: item.quantity })),
+            totalAmount: req.session.cart.reduce((acc, item) => acc + item.price * item.quantity, 0),
+            paymentStatus: 'Pending'
         });
 
-        // Clear the cart after successful checkout
+        const savedOrder = await newOrder.save();
         req.session.cart = [];
-        req.session.total = 0;
 
-        // Redirect to a thank you or invoice page
-        res.redirect('/invoice');
+        res.redirect(`/api/checkout/payment?orderId=${savedOrder._id}&paymentMethod=${paymentMethod}`);
     } catch (err) {
-        console.error('Error processing checkout:', err);
-        res.status(500).send('Error processing checkout. Please try again later.');
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// Payment page
+router.get('/payment', (req, res) => {
+    const { orderId, paymentMethod } = req.query;
+    res.render('payment', { title: 'Payment', orderId, paymentMethod });
+});
+
+// Simulate payment and update order status
+router.post('/payment', async (req, res) => {
+    const { orderId } = req.body;
+    try {
+        const order = await Order.findById(orderId);
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
+
+        order.paymentStatus = 'Completed';
+        await order.save();
+
+        // Send thank you email with invoice
+        sendThankYouEmail(order);
+
+        res.render('thankyou', { title: 'Thank You', order });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
     }
 });
 
