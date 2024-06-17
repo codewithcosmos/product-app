@@ -6,6 +6,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const productId = this.dataset.productId;
             const quantity = 1; // Or get the quantity from user input
 
+            addToCartButtons.forEach(button => {
+                button.addEventListener('click', async (e) => {
+                    const productId = e.target.dataset.productId;
+                    
             try {
                 const response = await fetch('/api/cart/add', {
                     method: 'POST',

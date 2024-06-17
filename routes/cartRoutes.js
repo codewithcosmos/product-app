@@ -1,14 +1,10 @@
 const express = require('express');
-const router = express.Router();
 const Product = require('../models/Product');
+const Order = require('../models/Order');
+const { sendThankYouEmail } = require('../utils/email');
+const router = express.Router();
 
-// Get cart items
-router.get('/', (req, res) => {
-    const cart = req.session.cart || [];
-    res.json(cart);
-});
-
-// Add item to cart
+// Add product to cart
 router.post('/add/:productId', async (req, res) => {
     const productId = req.params.productId;
     try {
@@ -16,27 +12,81 @@ router.post('/add/:productId', async (req, res) => {
         if (!product) {
             return res.status(404).json({ message: 'Product not found' });
         }
-        req.session.cart = req.session.cart || [];
-        req.session.cart.push(product);
-        res.json(req.session.cart); 
+
+        if (!req.session.cart) {
+            req.session.cart = [];
+        }
+
+        const existingProductIndex = req.session.cart.findIndex(p => p._id.toString() === productId);
+        if (existingProductIndex !== -1) {
+            req.session.cart[existingProductIndex].quantity += 1;
+        } else {
+            req.session.cart.push({ ...product.toObject(), quantity: 1 });
+        }
+
+        res.redirect('/cart');
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 });
 
-// Remove item from cart
-router.post('/remove/:productId', (req, res) => {
-    const productId = req.params.productId;
-    if (req.session.cart) {
-        req.session.cart = req.session.cart.filter(item => item._id.toString() !== productId);
-    }
-    res.json(req.session.cart); 
+// View cart
+router.get('/', (req, res) => {
+    res.render('cart', { title: 'Cart', cart: req.session.cart || [] });
 });
 
-// Clear the cart
-router.post('/clear', (req, res) => {
-    req.session.cart = [];
-    res.json({ message: 'Cart cleared' });
+// Checkout
+router.get('/checkout', (req, res) => {
+    res.render('checkout', { title: 'Checkout', cart: req.session.cart || [] });
+});
+
+// Complete checkout
+router.post('/checkout', async (req, res) => {
+    try {
+        const { paymentMethod } = req.body;
+        const user = req.session.user;
+
+        const newOrder = new Order({
+            user: user._id,
+            products: req.session.cart.map(item => ({ product: item._id, quantity: item.quantity })),
+            totalAmount: req.session.cart.reduce((acc, item) => acc + item.price * item.quantity, 0),
+            paymentStatus: 'Pending'
+        });
+
+        const savedOrder = await newOrder.save();
+        req.session.cart = [];
+
+        res.redirect(`/api/cart/payment?orderId=${savedOrder._id}&paymentMethod=${paymentMethod}`);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// Payment page
+router.get('/payment', (req, res) => {
+    const { orderId, paymentMethod } = req.query;
+    res.render('payment', { title: 'Payment', orderId, paymentMethod });
+});
+
+// Simulate payment and update order status
+router.post('/payment', async (req, res) => {
+    const { orderId } = req.body;
+    try {
+        const order = await Order.findById(orderId);
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
+
+        order.paymentStatus = 'Completed';
+        await order.save();
+
+        // Send thank you email with invoice
+        sendThankYouEmail(order);
+
+        res.render('thankyou', { title: 'Thank You', order });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
 });
 
 module.exports = router;

@@ -22,6 +22,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^5.13.22",
     "nodemailer": "^6.9.13",
+    "order": "^0.1.0",
     "pdfkit": "^0.15.0",
     "session": "^0.1.0"
   },

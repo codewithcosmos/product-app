@@ -208,17 +208,13 @@ section h2 {
 }
 
 #send-invoice:hover, #generate-invoice:hover {
-    background-color: #fff;
+    background: #c2c0c0;
     color: #000000;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-
 }
 
 #login-form button:hover {
-    background-color: #fff;
+    background: #c2c0c0;
     color: #000000;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-
 }
 /* Footer */
 footer {

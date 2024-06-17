@@ -91,7 +91,9 @@
                 <p>Total: R <%= total.toLocaleString('en-ZA') %></p>
             </div>
             <a href="/api/cart/checkout" class="checkout-btn">Proceed to Checkout</a>
-        <% } %>
+        <% }   else { %>
+            <p>Your cart is empty</p>
+        <% } %> 
     </main>
 
     <footer>

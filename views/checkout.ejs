@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <title><%= title %></title>
     <link rel="stylesheet" href="/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="/js/checkout.js"></script>
 </head>
 <body>
     <h1>Checkout</h1>
@@ -18,15 +20,17 @@
                 </li>
             <% }); %>
         </ul>
-        <button onclick="completeCheckout()">Complete Checkout</button>
+        <form id="payment-form">
+            <h3>Select Payment Method</h3>
+            <input type="radio" id="eft" name="paymentMethod" value="EFT" required>
+            <label for="eft">EFT</label><br>
+            <input type="radio" id="paypal" name="paymentMethod" value="PayPal" required>
+            <label for="paypal">PayPal</label><br>
+            <!-- Add more payment options as needed -->
+            <button type="button" id="checkout-button">Proceed to Payment</button>
+        </form>
     <% } else { %>
         <p>Your cart is empty</p>
     <% } %>
-    <script>
-        function completeCheckout() {
-            alert('Checkout complete!');
-            // Add actual checkout logic here
-        }
-    </script>
 </body>
 </html>
