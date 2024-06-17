@@ -4,11 +4,10 @@ const path = require('path');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const session = require('express-session');
-const MongoStore = require('connect-mongo')(session);
+const MongoStore = require('connect-mongo');
 const dotenv = require('dotenv');
 const Product = require('./models/Product');
 const seedProducts = require('./seed');
-const Product = require('./models/Product');
 const checkoutRouter = require('./routes/checkout'); 
 const productRouter = require('./routes/products'); 
 const invoiceRouter = require('./routes/invoiceRoutes'); 
@@ -20,7 +19,6 @@ const axios = require('axios');
 
 dotenv.config();
 
-
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -30,6 +28,15 @@ app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'ejs');
+
+// Session configuration
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'your_secret_key',
+    resave: false,
+    saveUninitialized: true,
+    store: MongoStore.create({ mongoUrl: process.env.MONGO_URI || 'mongodb://localhost:27017/webdev-services' }),
+    cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 day
+}));
 
 // Database connection
 mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/webdev-services', {
@@ -50,7 +57,7 @@ app.use('/api/admin', adminRouter);
 app.use('/api/cart', cartRouter); 
 
 // Home route
-app.get('/', async (req, res) => {
+app.get('/', async (_req, res) => {
     try {
         const products = await Product.find();
         res.render('index', { title: 'Home', products });
@@ -59,43 +66,34 @@ app.get('/', async (req, res) => {
     }
 });
 
-// API endpoint to fetch products (for client-side rendering)
-app.get('/api/products', async (req, res) => {
-    try {
-        const products = await Product.find();
-        res.json(products);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-});
-
-// Client-side rendering of products using Axios (assumed in your original code)
-app.get('/client/products', (req, res) => {
+// Serve static files for client-side rendering
+app.get('/client/products', (_req, res) => {
     res.sendFile(path.join(__dirname, 'client/products.html'));
 });
 
-app.get('/cart', (req, res) => {
+// Render other pages
+app.get('/cart', (_req, res) => {
     res.render('cart', { title: 'Cart' });
 });
 
-app.get('/quote', (req, res) => {
+app.get('/quote', (_req, res) => {
     res.render('quote', { title: 'Request a Quote' });
 });
 
-app.get('/invoice', (req, res) => {
+app.get('/invoice', (_req, res) => {
     res.render('invoice', { title: 'Invoice' });
 });
 
 // Admin routes
-app.get('/admin/login', (req, res) => {
+app.get('/admin/login', (_req, res) => {
     res.render('admin/login', { title: 'Admin Login' });
 });
 
-app.get('/admin/dashboard', (req, res) => {
+app.get('/admin/dashboard', (_req, res) => {
     res.render('admin/dashboard', { title: 'Admin Dashboard', adminName: 'Admin' });
 });
 
-app.get('/admin/products', async (req, res) => {
+app.get('/admin/products', async (_req, res) => {
     try {
         const products = await Product.find();
         res.render('admin/products', { title: 'Manage Products', products });
@@ -104,12 +102,12 @@ app.get('/admin/products', async (req, res) => {
     }
 });
 
-app.get('/admin/orders', (req, res) => {
+app.get('/admin/orders', (_req, res) => {
     res.render('admin/orders', { title: 'Manage Orders' });
 });
 
 // REST API Endpoints
-app.get('/api/products', async (req, res) => {
+app.get('/api/products', async (_req, res) => {
     try {
         const products = await Product.find();
         res.json(products);
@@ -186,10 +184,6 @@ app.delete('/api/products/:id', async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 });
-// server.js or app.js
-require('dotenv').config();
-
-// other configurations and middleware
 
 // Start the server
 app.listen(port, () => {

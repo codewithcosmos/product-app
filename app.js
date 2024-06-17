@@ -47,7 +47,7 @@ mongoose.connect(process.env.MONGO_URI, {
 // Routes
 
 // Home route
-app.get('/', async (req, res) => {
+app.get('/', async (_req, res) => {
     try {
         const products = await Product.find();
         res.render('index', { title: 'Home', products });
@@ -57,7 +57,7 @@ app.get('/', async (req, res) => {
 });
 
 // Products route
-app.get('/products', async (req, res) => {
+app.get('/products', async (_req, res) => {
     try {
         const products = await Product.find();
         res.render('products', { title: 'Products', products });
@@ -107,12 +107,12 @@ app.get('/admin/login', (req, res) => {
     res.render('admin/login', { title: 'Admin Login' });
 });
 
-app.get('/admin/dashboard', (req, res) => {
+app.get('/admin/dashboard', (_req, res) => {
     res.render('admin/dashboard', { title: 'Admin Dashboard', adminName: 'Admin' });
 });
 
 // API endpoint to fetch products (for client-side rendering)
-app.get('/api/products', async (req, res) => {
+app.get('/api/products', async (_req, res) => {
     try {
         const products = await Product.find();
         res.json(products);
@@ -122,7 +122,7 @@ app.get('/api/products', async (req, res) => {
 });
 
 // Client-side rendering of products using Axios (assumed in your original code)
-app.get('/client/products', (req, res) => {
+app.get('/client/products', (_req, res) => {
     res.sendFile(path.join(__dirname, 'client/products.html'));
 });
 
