@@ -9,12 +9,13 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <!-- Styles CSS -->
+    <link rel="stylesheet" href="forms.css">
+    <link rel="stylesheet" href="invoice.css">
     <link rel="stylesheet" href="css/styles.css">
     <!-- Company Title/Name -->
     <title>Kasiwebsites</title> 
     <!-- Search Icon -->
     <link rel="icon" type="img/png" href="kasimu.png">
-    <script src="js/scripts.js"></script>
 </head>
 <body>
     <header id="main-header">
@@ -75,62 +76,56 @@
             </div>
         </section>
 
-        <!-- Add sign-up and login forms -->
-<section id="signup" style="display: none;">
-    <div class="container">
-        <h2>Sign Up</h2>
-        <form id="signup-form">
-            <label for="new-email">Email:</label>
-            <input type="email" id="new-email" name="new-email" required>
-            <label for="new-password">Password:</label>
-            <input type="password" id="new-password" name="new-password" required>
-            <button type="submit" class="btn btn-primary">Sign Up</button>
-        </form>
-    </div>
-</section>
-
-<section id="login" style="display: none;">
-    <div class="container">
-        <h2>Login</h2>
-        <form id="login-form">
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-            <button type="submit" class="btn btn-primary">Login</button>
-        </form>
-    </div>
-    <button type="button" class="btn btn-primary position-relative">
-        Inbox
-        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-          99+
-          <span class="visually-hidden">unread messages</span>
-        </span>
-      </button>
-</section>
-
-        <section id="admin">
+        <!-- Sign Up Form -->
+        <section id="signup" style="display: none;">
             <div class="container">
-                <h2>Admin Dashboard</h2>
-                <button id="generate-invoice" class="btn btn-primary">Generate Invoice</button>
-                <button id="send-invoice" class="btn btn-primary">Send Invoice via Email</button>
+                <h2>Sign Up</h2>
+                <form id="signup-form">
+                    <label for="new-email">Email:</label>
+                    <input type="email" id="new-email" name="new-email" class="form-control" required>
+                    <label for="new-password">Password:</label>
+                    <input type="password" id="new-password" name="new-password" class="form-control" required>
+                    <button type="submit" class="btn btn-primary">Sign Up</button>
+                </form>
             </div>
         </section>
-        <section>
-            <div class="row g-0 bg-body-secondary position-relative">
-                <div class="col-md-6 mb-md-0 p-md-4">
-                  <img src="/public/images/custom-web-app.jpg" class="w-100" alt="...">
-                </div>
-                <div class="col-md-6 p-5 ps-mb-5">
-                  <h5 class="mt-0">Columns with stretched link</h5>
-                  <p>Another instance of placeholder content for this other custom component. It is intended to mimic what some real-world content would look like, and we're using it here to give the component a bit of body and size.</p>
-                  <a href="#" class="stretched-link">Go somewhere</a>
-                </div>
-              </div>
+
+        <!-- Login Form -->
+        <section id="login" style="display: none;">
+            <div class="container">
+                <h2>Login</h2>
+                <form id="login-form">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" class="form-control" required>
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" class="form-control" required>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </form>
+            </div>
+        </section>
+
+        <section id="admin-invoice">
+            <div class="container login">
+                <h2>Admin Dashboard</h2>
+                <form id="invoice-form">
+                    <label for="customer-name">Customer Name:</label>
+                    <input type="text" id="customer-name" name="customer-name" class="form-control" required>
+                    <label for="customer-email">Customer Email:</label>
+                    <input type="email" id="customer-email" name="customer-email" class="form-control" required>
+                    <button type="button" id="generate-invoice" class="btn btn-primary">Generate Invoice</button>
+                    <button id="send-invoice" class="btn btn-primary">Send Invoice via Email</button>
+                </form>
+                <a id="download-invoice-link" href="#" style="display: none;" class="btn btn-success">Download Invoice</a>
+            </div>
         </section>
     </main>
-
-    
+     <!-- Dummy Data Section -->
+     <section id="dummy-data">
+        <div class="container">
+            <h2>Dummy Data</h2>
+            <p>This is some dummy content to demonstrate the layout.</p>
+        </div>
+    </section>
 
     <footer>
         <div class="container">

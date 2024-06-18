@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', async () => {
+    // Elements
     const productListDiv = document.getElementById('product-list');
     const cartItemsDiv = document.getElementById('cart-items');
     const checkoutBtn = document.getElementById('checkout-btn');
@@ -10,6 +11,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     const signupSection = document.getElementById('signup');
     const loginBtn = document.getElementById('login-btn');
     const signupBtn = document.getElementById('signup-btn');
+    const showLoginBtn = document.getElementById('show-login-btn');
+    const showSignupBtn = document.getElementById('show-signup-btn');
+    const loginContainer = document.getElementById('login-container');
+    const signupContainer = document.getElementById('signup-container');
+    const generateInvoiceContainer = document.getElementById('generate-invoice-container');
+    const downloadInvoiceLink = document.getElementById('download-invoice-link');
 
     // Fetch and display products
     try {
@@ -76,8 +83,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // Handle generate invoice button click
-    generateInvoiceBtn.addEventListener('click', () => {
-        alert('Generate Invoice functionality will be implemented here.');
+    generateInvoiceBtn.addEventListener('click', async () => {
+        const customerName = document.getElementById('customer-name').value;
+        const customerEmail = document.getElementById('customer-email').value;
+
+        try {
+            const response = await axios.post('/api/generate-invoice', { customerName, customerEmail }, {
+                responseType: 'blob'
+            });
+
+            const blob = new Blob([response.data], { type: 'application/pdf' });
+            const url = window.URL.createObjectURL(blob);
+            downloadInvoiceLink.href = url;
+            downloadInvoiceLink.download = 'invoice.pdf';
+            downloadInvoiceLink.style.display = 'block';
+        } catch (error) {
+            console.error('Error generating invoice:', error);
+            alert('An error occurred while generating the invoice. Please try again later.');
+        }
     });
 
     // Handle send invoice button click
@@ -97,6 +120,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         signupSection.style.display = 'none';
     });
 
+    // Show login form and hide sign-up and generate invoice forms
+    showLoginBtn.addEventListener('click', () => {
+        generateInvoiceContainer.style.display = 'none';
+        signupContainer.style.display = 'none';
+        loginContainer.style.display = 'block';
+    });
+
+    // Show sign-up form and hide login and generate invoice forms
+    showSignupBtn.addEventListener('click', () => {
+        generateInvoiceContainer.style.display = 'none';
+        loginContainer.style.display = 'none';
+        signupContainer.style.display = 'block';
+    });
+
     // Handle login form submission
     loginForm.addEventListener('submit', async (event) => {
         event.preventDefault();
@@ -105,14 +142,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         const password = formData.get('password');
 
         try {
-            const response = await axios.post('/api/login', {
-                email,
-                password
-            });
+            const response = await axios.post('/api/login', { email, password });
 
             if (response.status === 200) {
                 alert('Login successful!');
-                // Optionally redirect to a dashboard or home page
                 window.location.href = '/dashboard';
             } else {
                 alert('Login failed! Please check your credentials.');
@@ -131,10 +164,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const password = formData.get('new-password');
 
         try {
-            const response = await axios.post('/api/signup', {
-                email,
-                password
-            });
+            const response = await axios.post('/api/signup', { email, password });
 
             if (response.status === 201) {
                 alert('Sign up successful! Please login.');

@@ -13,7 +13,7 @@ exports.createInvoicePDF = (invoice) => {
     doc.end();
 
     return doc;
-};const PDFDocument = require('pdfkit');
+};
 
 const createInvoicePDF = (order) => {
     const doc = new PDFDocument();

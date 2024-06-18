@@ -15,6 +15,8 @@ const quoteRouter = require('./routes/quoteRoutes');
 const userRouter = require('./routes/userRoutes'); 
 const adminRouter = require('./routes/adminRoutes'); 
 const cartRouter = require('./routes/cartRoutes'); 
+const PDFDocument = require('pdfkit');
+const fs = require('fs');
 const axios = require('axios');
 
 dotenv.config();
@@ -136,7 +138,8 @@ app.get('/api/products/:id', async (req, res) => {
     }
 });
 
-app.post('/api/products', async (req, res) => {
+    
+app.post('/api/products', '/api/generate-invoice', async (req, res) => {
     const product = new Product({
         name: req.body.name,
         price: req.body.price,
@@ -192,6 +195,45 @@ app.delete('/api/products/:id', async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 });
+
+
+    // Create a new PDF document
+    const doc = new PDFDocument();
+    const filename = `invoice_${Date.now()}.pdf`;
+    const filePath = `./invoices/${filename}`;
+
+    doc.pipe(fs.createWriteStream(filePath));
+
+    // Add document title
+    doc.fontSize(25).text('Invoice', { align: 'center' });
+
+    // Add customer info
+    doc.fontSize(12).text(`Customer: ${customerInfo.name}`);
+    doc.text(`Email: ${customerInfo.email}`);
+    doc.text(`Date: ${new Date().toLocaleDateString()}`);
+    doc.moveDown();
+
+    // Add product details
+    doc.fontSize(15).text('Products:');
+    products.forEach(product => {
+        doc.fontSize(12).text(`- ${product.name}: R ${product.price} x ${product.quantity} = R ${product.price * product.quantity}`);
+    });
+
+    // Calculate total
+    const total = products.reduce((sum, product) => sum + product.price * product.quantity, 0);
+    doc.moveDown();
+    doc.fontSize(15).text(`Total: R ${total}`);
+
+    // Finalize the PDF and end the stream
+    doc.end();
+
+    doc.on('finish', () => {
+        res.json({ success: true, filePath: `/invoices/${filename}` });
+    });
+
+
+// Serve the invoice files
+app.use('/invoices', express.static('invoices'));
 
 // Start the server
 app.listen(port, () => {
