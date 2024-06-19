@@ -25,14 +25,14 @@ router.post('/add/:productId', async (req, res) => {
             req.session.cart.push({ ...product.toObject(), quantity: 1 });
         }
 
-        res.redirect('/cart');
+        res.json({ message: 'Product added to cart', cart: req.session.cart });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 });
 
 // View cart
-router.get('/', async (req, res) => {
+router.get('/', (req, res) => {
     res.render('cart', { title: 'Cart', cart: req.session.cart || [] });
 });
 
@@ -114,4 +114,12 @@ router.post('/items', async (req, res) => {
 // Complete cart checkout
 router.post('/cart/checkout', async (req, res) => {
     try {
-        const orderDetails 
+        const orderDetails = req.body;
+        // Handle checkout logic, e.g., create an order, clear the cart, etc.
+        res.json({ message: 'Checkout successful' });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+module.exports = router;

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products</title>
+    <meta name="description" content="Kasiwebsites - Your one-stop shop for all your needs.">
+    <meta name="keywords" content="Kasiwebsites, products, ecommerce, shopping">
+    <meta name="author" content="Your Name">
+    <!-- Icon -->
+
+</head>
+<body>
+    <h1>Products</h1>
+    <div id="product-list"></div>
+
+    <script>
+        async function fetchProducts() {
+            try {
+                const response = await fetch('/api/products');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch products');
+                }
+                const products = await response.json();
+                const productList = document.getElementById('product-list');
+                productList.innerHTML = ''; // Clear previous content
+                products.forEach(product => {
+                    const productElement = document.createElement('div');
+                    productElement.innerHTML = `
+                        <h3>${product.name}</h3>
+                        <p>${product.description}</p>
+                        <button onclick="addToCart('${product._id}')">Add to Cart</button>
+                    `;
+                    productList.appendChild(productElement);
+                });
+            } catch (error) {
+                console.error(error);
+                alert('Failed to fetch products');
+            }
+        }
+
+        async function addToCart(productId) {
+            const quantity = 1; // You can allow users to input quantity if needed
+            const response = await fetch(`/cart/add/${productId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ productId, quantity }),
+            });
+            if (response.ok) {
+                const data = await response.json();
+                alert('Product added to cart!');
+                console.log(data); // Update UI as needed
+            } else {
+                const errorData = await response.json();
+                alert(`Error: ${errorData.message}`);
+            }
+        }
+
+        fetchProducts();
+    </script>
+</body>
+</html>

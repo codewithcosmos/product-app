@@ -1,4 +1,3 @@
-// controllers/cartController.js
 const Cart = require('../models/Cart');
 const Product = require('../models/Product');
 
@@ -13,21 +12,28 @@ exports.getCart = async (req, res) => {
 
 exports.addToCart = async (req, res) => {
     const { productId, quantity } = req.body;
+    if (!productId || !quantity) {
+        return res.status(400).json({ message: 'Product ID and quantity are required' });
+    }
+
     try {
-        let cart = await Cart.findOne({ user: req.user.id });
+        const cart = await Cart.findOne({ user: req.user.id });
         if (!cart) {
-            cart = new Cart({ user: req.user.id, products: [] });
+            return res.status(404).json({ message: 'Cart not found for the user' });
         }
+
         const product = await Product.findById(productId);
         if (!product) {
             return res.status(404).json({ message: 'Product not found' });
         }
-        const cartProduct = cart.products.find(p => p.product.equals(productId));
+
+        let cartProduct = cart.products.find(p => p.product.equals(productId));
         if (cartProduct) {
             cartProduct.quantity += quantity;
         } else {
             cart.products.push({ product: productId, quantity });
         }
+
         await cart.save();
         res.json(cart);
     } catch (err) {

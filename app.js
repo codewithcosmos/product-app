@@ -8,6 +8,7 @@ const MongoStore = require('connect-mongo')(session);
 const dotenv = require('dotenv');
 const Product = require('./models/Product');
 const seedProducts = require('./seed');
+const Cart = require('./models/Cart'); // Added Cart model import
 const checkoutRouter = require('./routes/checkout'); // Assuming checkoutRouter is defined separately
 const adminRoutes = require('./routes/adminRoutes'); // Include admin routes
 const productsRoutes = require('./routes/products'); // Example client route
@@ -32,7 +33,7 @@ app.set('view engine', 'ejs');
 
 // Session middleware
 app.use(session({
-    secret: process.env.SESSION_SECRET, // Use environment variable for session secret
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
     store: new MongoStore({ mongooseConnection: mongoose.connection }),
@@ -77,9 +78,13 @@ app.get('/products', async (req, res) => {
 // Cart routes
 
 // Display cart
-app.get('/cart', (req, res) => {
-    const cart = req.session.cart || [];
-    res.render('cart', { title: 'Cart', cart });
+app.get('/cart', async (_req, res) => {
+    try {
+        const cartItems = await Cart.find().populate('product');
+        res.render('cart', { title: 'Cart', cartItems });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
 });
 
 // Add product to cart
@@ -90,8 +95,8 @@ app.post('/cart/add/:productId', async (req, res) => {
         if (!product) {
             return res.status(404).json({ message: 'Product not found' });
         }
-        req.session.cart = req.session.cart || [];
-        req.session.cart.push(product);
+        const newCartItem = new Cart({ product: productId, quantity: 1 });
+        await newCartItem.save();
         res.redirect('/cart'); // Redirect to cart page after adding
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -99,12 +104,14 @@ app.post('/cart/add/:productId', async (req, res) => {
 });
 
 // Remove product from cart
-app.post('/cart/remove/:productId', (req, res) => {
-    const productId = req.params.productId;
-    if (req.session.cart) {
-        req.session.cart = req.session.cart.filter(item => item._id !== productId);
+app.post('/cart/remove/:cartItemId', async (req, res) => {
+    const cartItemId = req.params.cartItemId;
+    try {
+        await Cart.findByIdAndRemove(cartItemId);
+        res.redirect('/cart'); // Redirect to cart page after removing
+    } catch (err) {
+        res.status(500).json({ message: err.message });
     }
-    res.redirect('/cart'); // Redirect to cart page after removing
 });
 
 // Admin routes (example)

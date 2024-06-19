@@ -4,12 +4,13 @@ const path = require('path');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const session = require('express-session');
-const MongoStore = require('connect-mongo', session);
+const MongoStore = require('connect-mongo')(session); // Corrected syntax here
 const dotenv = require('dotenv');
 const Product = require('./models/Product');
 const seedProducts = require('./seed');
 const checkoutRouter = require('./routes/checkout'); 
 const productRouter = require('./routes/products'); 
+const productRouter = require('./routes/productRoutes'); // Assuming you have separate route files
 const invoiceRouter = require('./routes/invoiceRoutes'); 
 const quoteRouter = require('./routes/quoteRoutes'); 
 const userRouter = require('./routes/userRoutes'); 
@@ -26,6 +27,8 @@ const port = process.env.PORT || 5000;
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -58,6 +61,9 @@ app.use('/api/quotes', quoteRouter);
 app.use('/api/users', userRouter); 
 app.use('/api/admin', adminRouter); 
 app.use('/api/cart', cartRouter); 
+
+// Include the checkoutRouter
+app.use('/api/checkout', checkoutRouter); 
 
 // Home route
 app.get('/', async (req, res) => {
