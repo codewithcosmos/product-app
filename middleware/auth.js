@@ -21,3 +21,16 @@ exports.authAdmin = async (req, res, next) => {
         res.status(401).json({ message: 'Token is not valid' });
     }
 };
+// kasiwebsites/authMiddleware.js
+
+const requireAdmin = (req, res, next) => {
+    // Check if user is logged in and is an admin (role-based check)
+    if (req.session && req.session.admin) {
+      next(); // Allow access to the next middleware or route handler
+    } else {
+      res.redirect('/admin/login'); // Redirect to admin login page if not authenticated
+    }
+  };
+  
+  module.exports = { requireAdmin };
+  

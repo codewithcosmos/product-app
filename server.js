@@ -4,7 +4,7 @@ const path = require('path');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const session = require('express-session');
-const MongoStore = require('connect-mongo');
+const MongoStore = require('connect-mongo', session);
 const dotenv = require('dotenv');
 const Product = require('./models/Product');
 const seedProducts = require('./seed');
@@ -17,7 +17,6 @@ const adminRouter = require('./routes/adminRoutes');
 const cartRouter = require('./routes/cartRoutes'); 
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
-const axios = require('axios');
 
 dotenv.config();
 
@@ -27,21 +26,22 @@ const port = process.env.PORT || 5000;
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
-app.use('/api/cart', cartRouter);
-app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
-app.set('view engine', 'ejs');
 
 // Session configuration
 app.use(session({
     secret: process.env.SESSION_SECRET || 'your_secret_key',
     resave: false,
     saveUninitialized: true,
-    store: MongoStore.create({ mongoUrl: process.env.MONGO_URI || 'mongodb://localhost:27017/webdev-services' }),
+    store: new MongoStore({ 
+        mongooseConnection: mongoose.connection,
+        mongoUrl: process.env.MONGO_URI || 'mongodb://localhost:27017/webdev-services'
+    }),
     cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 day
 }));
 
-// Database connection
+// Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/webdev-services', {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -60,7 +60,7 @@ app.use('/api/admin', adminRouter);
 app.use('/api/cart', cartRouter); 
 
 // Home route
-app.get('/', async (_req, res) => {
+app.get('/', async (req, res) => {
     try {
         const products = await Product.find();
         res.render('index', { title: 'Home', products });
@@ -70,40 +70,38 @@ app.get('/', async (_req, res) => {
 });
 
 // Serve static files for client-side rendering
-app.get('/client/products', (_req, res) => {
+app.get('/client/products', (req, res) => {
     res.sendFile(path.join(__dirname, 'client/products.html'));
 });
-// Other code...
+
+// Cart and checkout routes
 app.get('/cart', (req, res) => {
     res.render('cart', { title: 'Cart', cart: req.session.cart || [] });
 });
+
 app.get('/api/cart/checkout', (req, res) => {
     res.render('checkout', { title: 'Checkout', cart: req.session.cart || [] });
 });
 
 // Render other pages
-app.get('/cart', (_req, res) => {
-    res.render('cart', { title: 'Cart' });
-});
-
-app.get('/quote', (_req, res) => {
+app.get('/quote', (req, res) => {
     res.render('quote', { title: 'Request a Quote' });
 });
 
-app.get('/invoice', (_req, res) => {
+app.get('/invoice', (req, res) => {
     res.render('invoice', { title: 'Invoice' });
 });
 
 // Admin routes
-app.get('/admin/login', (_req, res) => {
+app.get('/admin/login', (req, res) => {
     res.render('admin/login', { title: 'Admin Login' });
 });
 
-app.get('/admin/dashboard', (_req, res) => {
+app.get('/admin/dashboard', (req, res) => {
     res.render('admin/dashboard', { title: 'Admin Dashboard', adminName: 'Admin' });
 });
 
-app.get('/admin/products', async (_req, res) => {
+app.get('/admin/products', async (req, res) => {
     try {
         const products = await Product.find();
         res.render('admin/products', { title: 'Manage Products', products });
@@ -112,12 +110,12 @@ app.get('/admin/products', async (_req, res) => {
     }
 });
 
-app.get('/admin/orders', (_req, res) => {
+app.get('/admin/orders', (req, res) => {
     res.render('admin/orders', { title: 'Manage Orders' });
 });
 
 // REST API Endpoints
-app.get('/api/products', async (_req, res) => {
+app.get('/api/products', async (req, res) => {
     try {
         const products = await Product.find();
         res.json(products);
@@ -129,8 +127,8 @@ app.get('/api/products', async (_req, res) => {
 app.get('/api/products/:id', async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
-        if (product == null) {
-            return res.status(404).json({ message: 'Cannot find product' });
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found' });
         }
         res.json(product);
     } catch (err) {
@@ -138,8 +136,7 @@ app.get('/api/products/:id', async (req, res) => {
     }
 });
 
-    
-app.post('/api/products', '/api/generate-invoice', async (req, res) => {
+app.post('/api/products', async (req, res) => {
     const product = new Product({
         name: req.body.name,
         price: req.body.price,
@@ -158,20 +155,20 @@ app.post('/api/products', '/api/generate-invoice', async (req, res) => {
 app.patch('/api/products/:id', async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
-        if (product == null) {
-            return res.status(404).json({ message: 'Cannot find product' });
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found' });
         }
 
-        if (req.body.name != null) {
+        if (req.body.name) {
             product.name = req.body.name;
         }
-        if (req.body.price != null) {
+        if (req.body.price) {
             product.price = req.body.price;
         }
-        if (req.body.description != null) {
+        if (req.body.description) {
             product.description = req.body.description;
         }
-        if (req.body.inStock != null) {
+        if (req.body.inStock) {
             product.inStock = req.body.inStock;
         }
 
@@ -185,8 +182,8 @@ app.patch('/api/products/:id', async (req, res) => {
 app.delete('/api/products/:id', async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
-        if (product == null) {
-            return res.status(404).json({ message: 'Cannot find product' });
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found' });
         }
 
         await product.remove();
@@ -196,6 +193,10 @@ app.delete('/api/products/:id', async (req, res) => {
     }
 });
 
+// Generate invoice endpoint
+app.post('/api/generate-invoice', async (req, res) => {
+    const products = req.body.products;
+    const customerInfo = req.body.customerInfo;
 
     // Create a new PDF document
     const doc = new PDFDocument();
@@ -230,7 +231,7 @@ app.delete('/api/products/:id', async (req, res) => {
     doc.on('finish', () => {
         res.json({ success: true, filePath: `/invoices/${filename}` });
     });
-
+});
 
 // Serve the invoice files
 app.use('/invoices', express.static('invoices'));

@@ -9,7 +9,9 @@ const dotenv = require('dotenv');
 const Product = require('./models/Product');
 const seedProducts = require('./seed');
 const checkoutRouter = require('./routes/checkout'); // Assuming checkoutRouter is defined separately
-const axios = require('axios');
+const adminRoutes = require('./routes/adminRoutes'); // Include admin routes
+const productsRoutes = require('./routes/products'); // Example client route
+const { requireAdmin } = require('./authMiddleware'); // Import admin middleware
 
 // Load environment variables from .env file
 dotenv.config();
@@ -23,6 +25,9 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Set EJS as view engine
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 // Session middleware
@@ -45,9 +50,12 @@ mongoose.connect(process.env.MONGO_URI, {
 }).catch(err => console.error('MongoDB connection error:', err));
 
 // Routes
+app.use('/admin', adminRoutes); // Admin routes
+app.use('/products', productsRoutes); // Example client route
+app.use('/checkout', checkoutRouter); // Assuming checkoutRouter is defined in a separate file
 
 // Home route
-app.get('/', async (_req, res) => {
+app.get('/', async (req, res) => {
     try {
         const products = await Product.find();
         res.render('index', { title: 'Home', products });
@@ -57,7 +65,7 @@ app.get('/', async (_req, res) => {
 });
 
 // Products route
-app.get('/products', async (_req, res) => {
+app.get('/products', async (req, res) => {
     try {
         const products = await Product.find();
         res.render('products', { title: 'Products', products });
@@ -99,20 +107,17 @@ app.post('/cart/remove/:productId', (req, res) => {
     res.redirect('/cart'); // Redirect to cart page after removing
 });
 
-// Checkout routes
-app.use('/checkout', checkoutRouter); // Assuming checkoutRouter is defined in a separate file
-
 // Admin routes (example)
 app.get('/admin/login', (req, res) => {
     res.render('admin/login', { title: 'Admin Login' });
 });
 
-app.get('/admin/dashboard', (_req, res) => {
+app.get('/admin/dashboard', requireAdmin, (_req, res) => {
     res.render('admin/dashboard', { title: 'Admin Dashboard', adminName: 'Admin' });
 });
 
 // API endpoint to fetch products (for client-side rendering)
-app.get('/api/products', async (_req, res) => {
+app.get('/api/products', async (req, res) => {
     try {
         const products = await Product.find();
         res.json(products);
