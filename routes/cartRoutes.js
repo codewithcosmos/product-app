@@ -1,6 +1,7 @@
 const express = require('express');
 const Product = require('../models/Product');
 const Order = require('../models/Order');
+const Cart = require('../models/Cart');
 const { sendThankYouEmail } = require('../utils/email');
 const router = express.Router();
 
@@ -31,11 +32,11 @@ router.post('/add/:productId', async (req, res) => {
 });
 
 // View cart
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
     res.render('cart', { title: 'Cart', cart: req.session.cart || [] });
 });
 
-// Checkout
+// Checkout page
 router.get('/checkout', (req, res) => {
     res.render('checkout', { title: 'Checkout', cart: req.session.cart || [] });
 });
@@ -89,4 +90,28 @@ router.post('/payment', async (req, res) => {
     }
 });
 
-module.exports = router;
+// Fetch all items in the cart
+router.get('/items', async (req, res) => {
+    try {
+        const cartItems = await Cart.find();
+        res.json(cartItems);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// Add an item to the cart
+router.post('/items', async (req, res) => {
+    try {
+        const newItem = new Cart(req.body);
+        await newItem.save();
+        res.status(201).json(newItem);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// Complete cart checkout
+router.post('/cart/checkout', async (req, res) => {
+    try {
+        const orderDetails 

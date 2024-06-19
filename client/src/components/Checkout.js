@@ -1,36 +1,42 @@
-import React, { useContext } from 'react';
-import { CartContext } from '../context/CartContext';
-import { useHistory } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
 
-const Checkout = () => {
-    const { cart, clearCart } = useContext(CartContext);
-    const history = useHistory();
+const Cart = () => {
+  const [cartItems, setCartItems] = useState([]);
 
-    const handleCheckout = () => {
-        // Logic for handling checkout (e.g., API call to place order)
-        clearCart(); // Clear cart after checkout
-        alert('Checkout completed successfully!');
-        history.push('/'); // Redirect to home page after checkout
+  useEffect(() => {
+    const fetchCartItems = async () => {
+      const res = await axios.get('/api/cart');
+      setCartItems(res.data);
     };
+    fetchCartItems();
+  }, []);
 
-    return (
-        <div>
-            <h2>Checkout</h2>
-            {cart.length === 0 ? (
-                <p>Your cart is empty</p>
-            ) : (
-                <>
-                    {cart.map((item) => (
-                        <div key={item.productId}>
-                            <h3>{item.name}</h3>
-                            <p>Price: ${item.price}</p>
-                        </div>
-                    ))}
-                    <button onClick={handleCheckout}>Complete Order</button>
-                </>
-            )}
-        </div>
-    );
+  const handleCheckout = async () => {
+    try {
+      const res = await axios.post('/api/cart/checkout');
+      console.log('Checkout successful:', res.data);
+    } catch (err) {
+      console.error('Checkout error:', err);
+    }
+  };
+
+  if (!cartItems.length) return <div>Your cart is empty</div>;
+
+  return (
+    <div>
+      <h1>Cart</h1>
+      <ul>
+        {cartItems.map((item) => (
+          <li key={item._id}>
+            {item.name} - ${item.price} x {item.quantity}
+          </li>
+        ))}
+      </ul>
+      <button onClick={handleCheckout}>Checkout</button>
+    </div>
+  );
 };
 
-export default Checkout;
+export default Cart;

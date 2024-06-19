@@ -1,35 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
-const ProductList = ({ addToCart }) => {
-    const [products, setProducts] = useState([]);
+const ProductList = () => {
+  const [products, setProducts] = useState([]);
 
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const response = await axios.get('/api/products'); // Replace with actual API endpoint
-                setProducts(response.data);
-            } catch (error) {
-                console.error('Error fetching products:', error);
-            }
-        };
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const res = await axios.get('/api/products');
+      setProducts(res.data);
+    };
+    fetchProducts();
+  }, []);
 
-        fetchProducts();
-    }, []);
-
-    return (
-        <div>
-            <h2>Products</h2>
-            <ul>
-                {products.map(product => (
-                    <li key={product._id}>
-                        <p>{product.name} - R {product.price}</p>
-                        <button onClick={() => addToCart(product)}>Add to Cart</button>
-                    </li>
-                ))}
-            </ul>
-        </div>
-    );
+  return (
+    <div>
+      <h1>Product List</h1>
+      <ul>
+        {products.map((product) => (
+          <li key={product._id}>
+            <Link to={`/products/${product._id}`}>{product.name} - ${product.price}</Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 };
 
 export default ProductList;
