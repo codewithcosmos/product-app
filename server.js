@@ -4,12 +4,11 @@ const path = require('path');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const session = require('express-session');
-const MongoStore = require('connect-mongo')(session); // Corrected syntax here
+const MongoStore = require('connect-mongo', session); // Corrected syntax here
 const dotenv = require('dotenv');
 const Product = require('./models/Product');
 const seedProducts = require('./seed');
 const checkoutRouter = require('./routes/checkout'); 
-const productRouter = require('./routes/products'); 
 const productRouter = require('./routes/productRoutes'); // Assuming you have separate route files
 const invoiceRouter = require('./routes/invoiceRoutes'); 
 const quoteRouter = require('./routes/quoteRoutes'); 
@@ -66,7 +65,7 @@ app.use('/api/cart', cartRouter);
 app.use('/api/checkout', checkoutRouter); 
 
 // Home route
-app.get('/', async (req, res) => {
+app.get('/', async (_req, res) => {
     try {
         const products = await Product.find();
         res.render('index', { title: 'Home', products });
@@ -90,24 +89,24 @@ app.get('/api/cart/checkout', (req, res) => {
 });
 
 // Render other pages
-app.get('/quote', (req, res) => {
+app.get('/quote', (_req, res) => {
     res.render('quote', { title: 'Request a Quote' });
 });
 
-app.get('/invoice', (req, res) => {
+app.get('/invoice', (_req, res) => {
     res.render('invoice', { title: 'Invoice' });
 });
 
 // Admin routes
-app.get('/admin/login', (req, res) => {
+app.get('/admin/login', (_req, res) => {
     res.render('admin/login', { title: 'Admin Login' });
 });
 
-app.get('/admin/dashboard', (req, res) => {
+app.get('/admin/dashboard', (_req, res) => {
     res.render('admin/dashboard', { title: 'Admin Dashboard', adminName: 'Admin' });
 });
 
-app.get('/admin/products', async (req, res) => {
+app.get('/admin/products', async (_req, res) => {
     try {
         const products = await Product.find();
         res.render('admin/products', { title: 'Manage Products', products });
@@ -116,12 +115,12 @@ app.get('/admin/products', async (req, res) => {
     }
 });
 
-app.get('/admin/orders', (req, res) => {
+app.get('/admin/orders', (_req, res) => {
     res.render('admin/orders', { title: 'Manage Orders' });
 });
 
 // REST API Endpoints
-app.get('/api/products', async (req, res) => {
+app.get('/api/products', async (_req, res) => {
     try {
         const products = await Product.find();
         res.json(products);

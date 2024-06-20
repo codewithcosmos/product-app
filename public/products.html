@@ -6,7 +6,7 @@
     <title>Products</title>
     <meta name="description" content="Kasiwebsites - Your one-stop shop for all your needs.">
     <meta name="keywords" content="Kasiwebsites, products, ecommerce, shopping">
-    <meta name="author" content="Your Name">
+    <meta name="author" content="codewithcosmos">
     <!-- Icon -->
 
 </head>
@@ -15,50 +15,24 @@
     <div id="product-list"></div>
 
     <script>
-        async function fetchProducts() {
-            try {
-                const response = await fetch('/api/products');
-                if (!response.ok) {
-                    throw new Error('Failed to fetch products');
-                }
-                const products = await response.json();
-                const productList = document.getElementById('product-list');
-                productList.innerHTML = ''; // Clear previous content
-                products.forEach(product => {
-                    const productElement = document.createElement('div');
-                    productElement.innerHTML = `
-                        <h3>${product.name}</h3>
-                        <p>${product.description}</p>
-                        <button onclick="addToCart('${product._id}')">Add to Cart</button>
-                    `;
-                    productList.appendChild(productElement);
-                });
-            } catch (error) {
-                console.error(error);
-                alert('Failed to fetch products');
+        document.addEventListener('DOMContentLoaded', async function() {
+          try {
+            const response = await fetch('/api/products');
+            if (!response.ok) {
+              throw new Error('Network response was not ok ' + response.statusText);
             }
-        }
-
-        async function addToCart(productId) {
-            const quantity = 1; // You can allow users to input quantity if needed
-            const response = await fetch(`/cart/add/${productId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ productId, quantity }),
+            const data = await response.json();
+            const productsList = document.getElementById('productsList');
+            data.forEach(product => {
+              const productElement = document.createElement('div');
+              productElement.textContent = `Name: ${product.name}, Price: ${product.price}`;
+              productsList.appendChild(productElement);
             });
-            if (response.ok) {
-                const data = await response.json();
-                alert('Product added to cart!');
-                console.log(data); // Update UI as needed
-            } else {
-                const errorData = await response.json();
-                alert(`Error: ${errorData.message}`);
-            }
-        }
-
-        fetchProducts();
-    </script>
+          } catch (error) {
+            console.error('Error fetching products:', error);
+            alert('Failed to fetch products. Please try again later.');
+          }
+        });
+      </script>
 </body>
 </html>
