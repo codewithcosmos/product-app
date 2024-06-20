@@ -60,7 +60,6 @@ app.use('/api/quotes', quoteRouter);
 app.use('/api/users', userRouter); 
 app.use('/api/admin', adminRouter); 
 app.use('/api/cart', cartRouter); 
-
 // Include the checkoutRouter
 app.use('/api/checkout', checkoutRouter); 
 
