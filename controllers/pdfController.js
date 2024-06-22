@@ -1,15 +1,15 @@
 // controllers/pdfController.js
-const PDFDocument = require('pdfkit');
-const fs = require('fs');
-const path = require('path');
-const nodemailer = require('nodemailer');
+import PDFDocument from 'pdfkit';
+import { createWriteStream } from 'fs';
+import { join } from 'path';
+import { createTransport } from 'nodemailer';
 require('dotenv').config();
 
 const generateInvoicePDF = (invoiceData) => {
     const doc = new PDFDocument();
-    const filePath = path.join(__dirname, '..', 'invoices', `invoice_${invoiceData.id}.pdf`);
+    const filePath = join(__dirname, '..', 'invoices', `invoice_${invoiceData.id}.pdf`);
 
-    doc.pipe(fs.createWriteStream(filePath));
+    doc.pipe(createWriteStream(filePath));
 
     doc.fontSize(25).text('Invoice', { align: 'center' });
 
@@ -29,7 +29,7 @@ const generateInvoicePDF = (invoiceData) => {
 };
 
 const sendEmailWithAttachment = async (to, subject, text, attachmentPath) => {
-    const transporter = nodemailer.createTransport({
+    const transporter = createTransport({
         service: 'gmail',
         auth: {
             user: process.env.EMAIL,
@@ -52,13 +52,13 @@ const sendEmailWithAttachment = async (to, subject, text, attachmentPath) => {
     await transporter.sendMail(mailOptions);
 };
 
-exports.generateInvoice = (req, res) => {
+export function generateInvoice(req, res) {
     const invoiceData = req.body;
     const filePath = generateInvoicePDF(invoiceData);
     res.json({ message: 'Invoice generated', filePath });
-};
+}
 
-exports.sendInvoice = async (req, res) => {
+export async function sendInvoice(req, res) {
     const { to, subject, text, invoiceData } = req.body;
     const filePath = generateInvoicePDF(invoiceData);
 
@@ -68,4 +68,4 @@ exports.sendInvoice = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: 'Failed to send email', error });
     }
-};
+}

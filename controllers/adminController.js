@@ -1,55 +1,55 @@
-const User = require('../models/User');
-const Quote = require('../models/Quote');
-const Invoice = require('../models/Invoice');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const nodemailer = require('nodemailer');
-const { createInvoicePDF } = require('../utils/pdfGenerator');
+import User, { findOne, find } from '../models/User';
+import Quote from '../models/Quote';
+import Invoice, { findById } from '../models/Invoice';
+import { compare, hash } from 'bcryptjs';
+import { sign } from 'jsonwebtoken';
+import { createTransport } from 'nodemailer';
+import { createInvoicePDF } from '../utils/pdfGenerator';
 
 const jwtSecret = 'your_jwt_secret';
 
 // Admin login
-exports.login = async (req, res) => {
+export async function login(req, res) {
     const { username, password } = req.body;
     try {
-        const user = await User.findOne({ username });
+        const user = await findOne({ username });
         if (!user) return res.status(404).json({ message: 'User not found' });
 
-        const isMatch = await bcrypt.compare(password, user.password);
+        const isMatch = await compare(password, user.password);
         if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
-        const token = jwt.sign({ id: user._id, role: user.role }, jwtSecret, { expiresIn: '1h' });
+        const token = sign({ id: user._id, role: user.role }, jwtSecret, { expiresIn: '1h' });
         res.json({ token });
     } catch (err) {
         res.status(500).json({ message: 'Internal server error', error: err });
     }
-};
+}
 
 // Admin signup
-exports.signup = async (req, res) => {
+export async function signup(req, res) {
     const { username, password, email, role } = req.body;
     try {
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await hash(password, 10);
         const newUser = new User({ username, password: hashedPassword, email, role });
         await newUser.save();
         res.status(201).json(newUser);
     } catch (err) {
         res.status(400).json({ message: 'Error creating user', error: err });
     }
-};
+}
 
 // Get all users
-exports.getAllUsers = async (req, res) => {
+export async function getAllUsers(_req, res) {
     try {
-        const users = await User.find();
+        const users = await find();
         res.json(users);
     } catch (err) {
         res.status(400).json({ message: 'Error fetching users', error: err });
     }
-};
+}
 
 // Create quote
-exports.createQuote = async (req, res) => {
+export async function createQuote(req, res) {
     const { client, description, amount } = req.body;
     try {
         const newQuote = new Quote({ client, description, amount });
@@ -58,10 +58,10 @@ exports.createQuote = async (req, res) => {
     } catch (err) {
         res.status(400).json({ message: 'Error creating quote', error: err });
     }
-};
+}
 
 // Create invoice
-exports.createInvoice = async (req, res) => {
+export async function createInvoice(req, res) {
     const { client, items, total } = req.body;
     try {
         const newInvoice = new Invoice({ client, items, total });
@@ -70,18 +70,18 @@ exports.createInvoice = async (req, res) => {
     } catch (err) {
         res.status(400).json({ message: 'Error creating invoice', error: err });
     }
-};
+}
 
 // Send email with PDF attachment
-exports.sendEmail = async (req, res) => {
+export async function sendEmail(req, res) {
     const { to, subject, text, invoiceId } = req.body;
 
     try {
-        const invoice = await Invoice.findById(invoiceId);
+        const invoice = await findById(invoiceId);
         if (!invoice) return res.status(404).json({ message: 'Invoice not found' });
 
         createInvoicePDF(invoice, (filePath) => {
-            const transporter = nodemailer.createTransport({
+            const transporter = createTransport({
                 service: 'gmail',
                 auth: {
                     user: process.env.EMAIL_USER,
@@ -114,4 +114,4 @@ exports.sendEmail = async (req, res) => {
     } catch (err) {
         res.status(500).json({ message: 'Internal server error', error: err });
     }
-};
+}
