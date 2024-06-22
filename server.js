@@ -4,7 +4,7 @@ const path = require('path');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const session = require('express-session');
-const MongoStore = require('connect-mongo', session); // Corrected syntax here
+const MongoStore = require('connect-mongo'); // Corrected syntax here
 const dotenv = require('dotenv');
 const Product = require('./models/Product');
 const seedProducts = require('./seedProducts'); // Updated import statement
@@ -22,6 +22,10 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 5000;
+
+// Set EJS as templating engine
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 
 // Middleware
 app.use(cors());
