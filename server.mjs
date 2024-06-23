@@ -18,6 +18,8 @@ import userRouter from './routes/userRoutes.mjs';
 import adminRouter from './routes/adminRoutes.mjs';
 import cartRouter from './routes/cartRoutes.mjs';
 import PDFDocument from 'pdfkit';
+import ejs from 'ejs';
+import fs from 'fs';
 import { createWriteStream } from 'fs';
 
 config();
@@ -25,7 +27,7 @@ config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Set EJS as templating engine
+// Set EJS as the view engine
 app.set('view engine', 'ejs');
 app.set('views', join(dirname(fileURLToPath(import.meta.url)), 'views'));
 
@@ -55,6 +57,36 @@ mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/product-app
     // Seed the database
     seedProducts(); // Call the seed function
 }).catch(err => console.log(err));
+
+// Render an EJS file
+const html = ejs.render('<p>Welcome <%= name %></p>', { name: 'Kasiwebsites' });
+console.log(html);
+
+// Read a file asynchronously
+fs.readFile('example.txt', 'utf8', (err, data) => {
+    if (err) throw err;
+    console.log(data);
+});
+
+// Write to a file asynchronously
+fs.writeFile('example.txt', 'Welcome to Kasiwebsites!', (err) => {
+    if (err) throw err;
+    console.log('File written successfully');
+});
+
+const filePath = 'C:\\Users\\Admin\\desktop\\product-app\\example.txt';  // Adjust this path accordingly
+
+fs.readFile(filePath, 'utf8', (err, data) => {
+    if (err) {
+        if (err.code === 'ENOENT') {
+            console.error(`File not found: ${filePath}`);
+        } else {
+            throw err;  // Throw other errors
+        }
+    } else {
+        console.log(data);
+    }
+});
 
 // Routes
 app.use('/api/products', productRouter);

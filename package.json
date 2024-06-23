@@ -26,6 +26,7 @@
     "mongoose": "^5.13.22",
     "nodemailer": "^6.9.14",
     "order": "^0.1.0",
+    "path": "^0.12.7",
     "pdf": "^0.1.0",
     "pdf-lib": "^1.17.1",
     "pdfkit": "^0.15.0",
@@ -34,6 +35,9 @@
     "sign": "^1.0.2"
   },
   "devDependencies": {
+    "@types/ejs": "^3.1.5",
+    "@types/express": "^4.17.21",
+    "@types/express-session": "^1.18.0",
     "nodemon": "^3.1.4"
   },
   "keywords": []
