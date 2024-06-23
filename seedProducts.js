@@ -1,11 +1,12 @@
 // Load environment variables from .env file
-require('dotenv').config();
+import dotenv from 'dotenv';
+dotenv.config();
 
 // Import mongoose to interact with MongoDB
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
-// Full path to the Product model
-const Product = require('./models/Product');
+// Import Product model and functions from Product.mjs
+import { deleteMany, insertMany } from './models/Product.mjs';
 
 // Define the products to be seeded into the database
 const products = [
@@ -110,11 +111,11 @@ async function seedProducts() {
         console.log('Connected to MongoDB');
 
         // Remove all existing products from the collection
-        await Product.deleteMany({});
+        await deleteMany();
         console.log('Old products removed');
 
         // Insert the new products into the collection
-        await Product.insertMany(products);
+        await insertMany(products);
         console.log('Database seeded with new products');
     } catch (error) {
         console.error('Error seeding database:', error);
@@ -124,5 +125,5 @@ async function seedProducts() {
     }
 }
 
-// Call the function to seed products
-seedProducts();
+
+export { seedProducts };

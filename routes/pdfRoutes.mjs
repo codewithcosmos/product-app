@@ -1,8 +1,8 @@
-// routes/pdfRoutes.js
-const express = require('express');
-const router = express.Router();
-const { generateInvoicePDF } = require('../controllers/pdfController');
-const { sendEmailWithAttachment } = require('../utils/email');
+// routes/pdfRoutes.mjs
+import { Router } from 'express';
+const router = Router();
+import { generateInvoicePDF } from '../controllers/pdfController';
+import { sendEmailWithAttachment } from '../utils/email';
 
 router.post('/generate-invoice', async (req, res) => {
   const invoiceData = req.body;
@@ -22,4 +22,4 @@ router.post('/send-invoice', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

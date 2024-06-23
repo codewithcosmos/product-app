@@ -1,27 +1,29 @@
-import express, { json, urlencoded, static as serveStatic } from 'express';
-import { connection, connect } from 'mongoose';
+// server.mjs
+
+import express from 'express';
+import { json, urlencoded, static as serveStatic } from 'express';
+import mongoose from 'mongoose';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import cors from 'cors';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import { config } from 'dotenv';
-import Product from './models/Product.js';
-import seedProducts from './seedProducts.js';
-import checkoutRouter from './routes/checkout.js';
-import productRouter from './routes/productRoutes.js';
-import invoiceRouter from './routes/invoiceRoutes.js';
-import quoteRouter from './routes/quoteRoutes.js';
-import userRouter from './routes/userRoutes.js';
-import adminRouter from './routes/adminRoutes.js';
-import cartRouter from './routes/cartRoutes.js';
+import Product from './models/Product.mjs';
+import { seedProducts } from './seedProducts.js';
+import { router as productRouter } from './routes/productRoutes.mjs';
+import invoiceRouter from './routes/invoiceRoutes.mjs';
+import quoteRouter from './routes/quoteRoutes.mjs';
+import userRouter from './routes/userRoutes.mjs';
+import adminRouter from './routes/adminRoutes.mjs';
+import cartRouter from './routes/cartRoutes.mjs';
 import PDFDocument from 'pdfkit';
 import { createWriteStream } from 'fs';
 
 config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 
 // Set EJS as templating engine
 app.set('view engine', 'ejs');
@@ -39,19 +41,19 @@ app.use(session({
     resave: false,
     saveUninitialized: true,
     store: MongoStore.create({ 
-        mongoUrl: process.env.MONGO_URI || 'mongodb://localhost:27017/webdev-services'
+        mongoUrl: process.env.MONGO_URI || 'mongodb://localhost:27017/product-app'
     }),
     cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 day
 }));
 
 // Connect to MongoDB
-connect(process.env.MONGO_URI || 'mongodb://localhost:27017/webdev-services', {
+mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/product-app', {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => {
     console.log('MongoDB connected');
     // Seed the database
-    seedProducts();
+    seedProducts(); // Call the seed function
 }).catch(err => console.log(err));
 
 // Routes
@@ -61,7 +63,6 @@ app.use('/api/quotes', quoteRouter);
 app.use('/api/users', userRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/cart', cartRouter);
-app.use('/api/checkout', checkoutRouter);
 
 // Home route
 app.get('/', async (_req, res) => {
@@ -74,7 +75,7 @@ app.get('/', async (_req, res) => {
 });
 
 // Serve static files for client-side rendering
-app.get('/client/products', (req, res) => {
+app.get('/client/products', (_req, res) => {
     res.sendFile(join(dirname(fileURLToPath(import.meta.url)), 'client/products.html'));
 });
 
@@ -172,7 +173,7 @@ app.patch('/api/products/:id', async (req, res) => {
         if (req.body.description) {
             product.description = req.body.description;
         }
-        if (req.body.inStock) {
+        if (req.body.inStock !== undefined) {
             product.inStock = req.body.inStock;
         }
 
@@ -240,7 +241,13 @@ app.post('/api/generate-invoice', async (req, res) => {
 // Serve the invoice files
 app.use('/invoices', serveStatic('invoices'));
 
+// Error handling middleware
+app.use((err, _req, res, _next) => {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
+});
+
 // Start the server
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+    console.log(`Server is running on http://localhost:${PORT}`);
 });

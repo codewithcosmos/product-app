@@ -1,10 +1,10 @@
 // db.js
-const mongoose = require('mongoose');
+import { connect } from 'mongoose';
 require('dotenv').config();
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI, {
+    connect(process.env.MONGO_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true
     });
@@ -17,10 +17,10 @@ const connectDB = async () => {
 
 // kasiwebsites/db.js
 
-const mysql = require('mysql2');
+import { createConnection } from 'mysql2';
 require('dotenv').config();
 
-const db = mysql.createConnection({
+const db = createConnection({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
@@ -35,6 +35,4 @@ db.connect((err) => {
   console.log('Database connected');
 });
 
-module.exports = db;
-
-module.exports = connectDB;
+export default connectDB;

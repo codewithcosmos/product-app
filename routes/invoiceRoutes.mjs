@@ -1,9 +1,11 @@
-const express = require('express');
-const router = express.Router();
-const Invoice = require('../models/Invoice');
-const Product = require('../models/Product');
-const { createInvoicePDF } = require('../utils/pdfGenerator');
-const nodemailer = require('nodemailer');
+// routes/invoiceRoutes.mjs
+
+import { Router } from 'express';
+import { createTransport } from 'nodemailer';
+import { createInvoicePDF } from '../utils/pdfGenerator.mjs';
+import Invoice from '../models/Invoice.mjs'; // Importing default export
+
+const router = Router();
 
 // Get all invoices
 router.get('/', async (req, res) => {
@@ -79,7 +81,7 @@ router.post('/sendEmail', async (req, res) => {
         if (!invoice) return res.status(404).json({ message: 'Invoice not found' });
 
         createInvoicePDF(invoice, async (filePath) => {
-            const transporter = nodemailer.createTransport({
+            const transporter = createTransport({
                 service: 'gmail',
                 auth: {
                     user: process.env.EMAIL_USER,
@@ -114,37 +116,5 @@ router.post('/sendEmail', async (req, res) => {
     }
 });
 
-// Cart routes
-
-// Display cart
-router.get('/cart', (req, res) => {
-    const cart = req.session.cart || [];
-    res.json(cart);
-});
-
-// Add product to cart
-router.post('/cart/add/:productId', async (req, res) => {
-    const productId = req.params.productId;
-    try {
-        const product = await Product.findById(productId);
-        if (!product) {
-            return res.status(404).json({ message: 'Product not found' });
-        }
-        req.session.cart = req.session.cart || [];
-        req.session.cart.push(product);
-        res.json(req.session.cart); // Return the updated cart
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-});
-
-// Remove product from cart
-router.post('/cart/remove/:productId', (req, res) => {
-    const productId = req.params.productId;
-    if (req.session.cart) {
-        req.session.cart = req.session.cart.filter(item => item._id.toString() !== productId);
-    }
-    res.json(req.session.cart); // Return the updated cart
-});
-
-module.exports = router;
+// Export the router
+export default router;

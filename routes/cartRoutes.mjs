@@ -1,8 +1,9 @@
-const express = require('express');
-const Product = require('../models/Product');
-const Order = require('../models/Order');
-const Cart = require('../models/Cart');
-const { sendThankYouEmail } = require('../utils/email');
+import express from 'express';
+import Product from '../models/Product.mjs';
+import Order from '../models/Order.mjs';
+import Cart from '../models/Cart.mjs';
+import { sendThankYouEmail } from '../utils/email.mjs';
+
 const router = express.Router();
 
 // Add product to cart
@@ -122,4 +123,4 @@ router.post('/cart/checkout', async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

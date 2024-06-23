@@ -1,18 +1,18 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const path = require('path');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const session = require('express-session');
-const MongoStore = require('connect-mongo')(session);
-const dotenv = require('dotenv');
-const Product = require('./models/Product');
-const seedProducts = require('./seed');
-const Cart = require('./models/Cart'); // Added Cart model import
-const checkoutRouter = require('./routes/checkout'); // Assuming checkoutRouter is defined separately
-const adminRoutes = require('./routes/adminRoutes'); // Include admin routes
-const productsRoutes = require('./routes/products'); // Example client route
-const { requireAdmin } = require('./authMiddleware'); // Import admin middleware
+import express from 'express';
+import mongoose from 'mongoose';
+import path from 'path';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import session from 'express-session';
+import connectMongo from 'connect-mongo';
+import dotenv from 'dotenv';
+import Product from './models/Product.mjs';
+import seedProducts from './seed';
+import Cart from './models/Cart.mjs';
+import checkoutRouter from './routes/checkout.mjs';
+import adminRoutes from './routes/adminRoutes.mjs';
+import productsRoutes from './routes/products.mjs';
+import { requireAdmin } from './authMiddleware';
 
 // Load environment variables from .env file
 dotenv.config();
@@ -31,7 +31,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-// Session middleware
+// Session configuration
+const MongoStore = connectMongo(session);
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
@@ -56,7 +57,7 @@ app.use('/products', productsRoutes); // Example client route
 app.use('/checkout', checkoutRouter); // Assuming checkoutRouter is defined in a separate file
 
 // Home route
-app.get('/', async (req, res) => {
+app.get('/', async (_req, res) => {
     try {
         const products = await Product.find();
         res.render('index', { title: 'Home', products });
@@ -66,7 +67,7 @@ app.get('/', async (req, res) => {
 });
 
 // Products route
-app.get('/products', async (req, res) => {
+app.get('/products', async (_req, res) => {
     try {
         const products = await Product.find();
         res.render('products', { title: 'Products', products });
@@ -115,7 +116,7 @@ app.post('/cart/remove/:cartItemId', async (req, res) => {
 });
 
 // Admin routes (example)
-app.get('/admin/login', (req, res) => {
+app.get('/admin/login', (_req, res) => {
     res.render('admin/login', { title: 'Admin Login' });
 });
 
@@ -124,7 +125,7 @@ app.get('/admin/dashboard', requireAdmin, (_req, res) => {
 });
 
 // API endpoint to fetch products (for client-side rendering)
-app.get('/api/products', async (req, res) => {
+app.get('/api/products', async (_req, res) => {
     try {
         const products = await Product.find();
         res.json(products);

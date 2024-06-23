@@ -1,6 +1,6 @@
-const express = require('express');
-const router = express.Router();
-const User = require('../models/User');
+import { Router } from 'express';
+const router = Router();
+import User, { findOne } from '../models/User.mjs';
 
 // Signup Route
 router.get('/signup', (_req, res) => {
@@ -27,7 +27,7 @@ router.get('/login', (_req, res) => {
 router.post('/login', async (req, res) => {
     try {
         const { username, password } = req.body;
-        const user = await User.findOne({ username });
+        const user = await findOne({ username });
         if (!user || !(await user.comparePassword(password))) {
             return res.status(400).send('Invalid username or password');
         }
@@ -47,4 +47,4 @@ router.get('/logout', (req, res) => {
     });
 });
 
-module.exports = router;
+export default router;

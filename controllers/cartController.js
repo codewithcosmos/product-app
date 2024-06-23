@@ -1,5 +1,5 @@
-import { findOne } from '../models/Cart';
-import { findById } from '../models/Product';
+import { findOne } from '../models/Cart.mjs';
+import { findById } from '../models/Product.mjs';
 
 export async function getCart(req, res) {
     try {

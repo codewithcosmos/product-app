@@ -1,10 +1,15 @@
-const express = require('express');
-const router = express.Router();
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
-require('dotenv').config();
+// Import necessary modules
+import { Router } from 'express';
+import User from '../models/User.mjs'; // Assuming User model is exported as default from User.mjs
+import pkg from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
 
+const { hash, compare } = pkg;
+const { verify, sign } = jwt;
+dotenv.config();
+
+const router = Router();
 const jwtSecret = process.env.JWT_SECRET;
 
 // Middleware to check authentication
@@ -12,7 +17,7 @@ const authenticateToken = (req, res, next) => {
     const token = req.header('Authorization')?.split(' ')[1];
     if (!token) return res.sendStatus(401);
 
-    jwt.verify(token, jwtSecret, (err, user) => {
+    verify(token, jwtSecret, (err, user) => {
         if (err) return res.sendStatus(403);
         req.user = user;
         next();
@@ -23,7 +28,7 @@ const authenticateToken = (req, res, next) => {
 router.post('/signup', async (req, res) => {
     const { username, password, email, role } = req.body;
     try {
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await hash(password, 10);
         const newUser = new User({ username, password: hashedPassword, email, role });
         await newUser.save();
         res.status(201).json(newUser);
@@ -34,15 +39,15 @@ router.post('/signup', async (req, res) => {
 
 // User login
 router.post('/login', async (req, res) => {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
     try {
-        const user = await User.findOne({ username });
+        const user = await User.findOne({ email });
         if (!user) return res.status(404).json({ message: 'User not found' });
 
-        const isMatch = await bcrypt.compare(password, user.password);
+        const isMatch = await compare(password, user.password);
         if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
-        const token = jwt.sign({ id: user._id, role: user.role }, jwtSecret, { expiresIn: '1h' });
+        const token = sign({ id: user._id, role: user.role }, jwtSecret, { expiresIn: '1h' });
         res.json({ token });
     } catch (err) {
         res.status(500).json({ message: 'Server error', error: err.message });
@@ -97,4 +102,4 @@ router.delete('/:id', authenticateToken, async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;
