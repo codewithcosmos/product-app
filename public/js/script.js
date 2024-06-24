@@ -178,7 +178,37 @@ document.addEventListener('DOMContentLoaded', async () => {
             alert('An error occurred during sign up. Please try again later.');
         }
     });
-
+    // document.addEventListener('DOMContentLoaded', async () => {
+    //     const productListDiv = document.getElementById('product-list');
+    
+    //     // Function to fetch and display products
+    //     async function fetchAndDisplayProducts() {
+    //         try {
+    //             const response = await axios.get('/api/products');
+    //             const products = response.data;
+    
+    //             products.forEach(product => {
+    //                 const productDiv = document.createElement('div');
+    //                 productDiv.classList.add('product');
+    //                 productDiv.innerHTML = `
+    //                     <img src="images/${product.imageUrl}" alt="${product.name}">
+    //                     <h3>${product.name}</h3>
+    //                     <p>${product.description}</p>
+    //                     <p>Price: R ${product.price.toLocaleString('en-ZA')}</p>
+    //                     <button class="add-to-cart" data-product-id="${product._id}">Add to Cart</button>
+    //                 `;
+    //                 productListDiv.appendChild(productDiv);
+    //             });
+    
+    //         } catch (error) {
+    //             console.error('Error fetching products:', error);
+    //         }
+    //     }
+    
+    //     // Call fetchAndDisplayProducts function
+    //     fetchAndDisplayProducts();
+    // });
+    
     // Function to format price in Rands
     function formatPriceInRands(price) {
         return `${price.toLocaleString('en-ZA')}`;
@@ -207,6 +237,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Initial function calls to fetch and inject partials
-    fetchAndInjectNavbar();
-    fetchAndInjectFooter();
+   fetchAndDisplayProducts();
+   fetchAndDisplayCartItems();
+   fetchAndInjectNavbar();
+   fetchAndInjectFooter();
 });
