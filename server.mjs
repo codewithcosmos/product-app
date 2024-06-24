@@ -98,6 +98,7 @@ app.use('/api/quotes', quoteRouter);
 app.use('/api/users', userRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/cart', cartRouter);
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Home route
 app.get('/', async (_req, res) => {
