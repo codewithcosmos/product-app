@@ -1,12 +1,12 @@
 // Load environment variables from .env file
 import dotenv from 'dotenv';
 dotenv.config();
-
 // Import mongoose to interact with MongoDB
 import mongoose from 'mongoose';
 
 // Import Product model and functions from Product.mjs
 import { deleteMany, insertMany } from './models/Product.mjs';
+import env from 'server/src/config/env';
 
 // Define the products to be seeded into the database
 const products = [
@@ -105,12 +105,12 @@ const products = [
 async function seedProducts() {
   try {
       // Connect to MongoDB using the URI from the .env file
-      await mongoose.connect(process.env.MONGO_URI, {
-          useNewUrlParser: true,
-          useUnifiedTopology: true,
-          useCreateIndex: true,
-          useFindAndModify: false
-      });
+      mongoose.connect(env.MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useCreateIndex: true,
+      useFindAndModify: false
+    });
       console.log('Connected to MongoDB');
 
       // Remove all existing products from the collection

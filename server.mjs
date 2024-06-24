@@ -31,6 +31,9 @@ const PORT = process.env.PORT || 3000;
 app.set('view engine', 'ejs');
 app.set('views', join(dirname(fileURLToPath(import.meta.url)), 'views'));
 
+const fullPath = path.resolve(__dirname, 'views', 'index.ejs');
+console.log(fullPath); // Outputs the full path to 'views/index.ejs'
+
 // Middleware
 app.use(cors());
 app.use(json());

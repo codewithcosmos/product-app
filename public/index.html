@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kasiwebsites - Professional Web Development and Design Services</title>
+    <title>Welcome to Kasiwebsites</title>
     <!-- Meta Description -->
     <meta name="description" content="Kasiwebsites offers professional web development, design, graphic design, SEO, and maintenance services. Get custom solutions tailored to your business needs.">
     <!-- Meta Keywords -->
@@ -43,10 +43,11 @@
     </style>
 </head>
 <body>
-    <header>
-        <%- include('partials/navbar.ejs') %>
+    <header id="header">
+        <!-- Navbar will be fetched and injected here -->
     </header>
     <main>
+        <h1>Welcome to Kasiwebsites</h1>
         <section id="products">
             <div class="container">
                 <h2>Products</h2>
@@ -70,7 +71,7 @@
         <section id="signup" style="display: none;">
             <div class="container">
                 <h2>Sign Up</h2>
-                <%- include('partials/signup-form.ejs') %>
+                <!-- Signup form content -->
             </div>
         </section>
 
@@ -78,7 +79,7 @@
         <section id="login" style="display: none;">
             <div class="container">
                 <h2>Login</h2>
-                <%- include('partials/login-form.ejs') %>
+                <!-- Login form content -->
             </div>
         </section>
 
@@ -86,29 +87,17 @@
         <section id="admin-invoice" style="display: none;">
             <div class="container">
                 <h2>Admin Dashboard</h2>
-                <form id="invoice-form">
-                    <label for="customer-name">Customer Name:</label>
-                    <input type="text" id="customer-name" name="customer-name" class="form-control" required>
-                    <label for="customer-email">Customer Email:</label>
-                    <input type="email" id="customer-email" name="customer-email" class="form-control" required>
-                    <button type="button" id="generate-invoice" class="btn btn-primary">Generate Invoice</button>
-                    <button type="button" id="send-invoice" class="btn btn-primary">Send Invoice via Email</button>
-                </form>
-                <a id="download-invoice-link" href="#" style="display: none;" class="btn btn-success">Download Invoice</a>
+                <!-- Admin invoice form content -->
             </div>
         </section>
     </main>
-    <footer>
-        <%- include('partials/footer.ejs') %>
+    <footer id="footer">
+        <!-- Footer will be fetched and injected here -->
     </footer>
 
     <!-- JavaScript Links -->
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script src="/js/scripts.js"></script>
-    <script src="/js/cart.js"></script>
-    <script src="/js/auth.js"></script>
-    <script src="/js/admin.js"></script>
-    <script src="/js/seed.js"></script>
+    <script src="/js/script.js"></script> <!-- Load your custom script.js -->
     <!-- Bootstrap CDN -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>

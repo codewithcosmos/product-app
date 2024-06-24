@@ -183,4 +183,30 @@ document.addEventListener('DOMContentLoaded', async () => {
     function formatPriceInRands(price) {
         return `${price.toLocaleString('en-ZA')}`;
     }
+
+    // Function to fetch and inject navbar content
+    async function fetchAndInjectNavbar() {
+        try {
+            const response = await fetch('/partials/navbar.html'); // Adjust path as per your server setup
+            const navbarHtml = await response.text();
+            document.getElementById('header').innerHTML = navbarHtml;
+        } catch (error) {
+            console.error('Error fetching navbar:', error);
+        }
+    }
+
+    // Function to fetch and inject footer content
+    async function fetchAndInjectFooter() {
+        try {
+            const response = await fetch('/partials/footer.html'); // Adjust path as per your server setup
+            const footerHtml = await response.text();
+            document.getElementById('footer').innerHTML = footerHtml;
+        } catch (error) {
+            console.error('Error fetching footer:', error);
+        }
+    }
+
+    // Initial function calls to fetch and inject partials
+    fetchAndInjectNavbar();
+    fetchAndInjectFooter();
 });

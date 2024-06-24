@@ -3,57 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to Product App</title>
-    <!-- Link to your CSS file -->
+    <title>Welcome to Kasiwebsites</title>
+    <!-- Meta Description -->
+    <meta name="description" content="Kasiwebsites offers professional web development, design, graphic design, SEO, and maintenance services. Get custom solutions tailored to your business needs.">
+    <!-- Meta Keywords -->
+    <meta name="keywords" content="web development, web design, graphic design, SEO, web maintenance, Kasiwebsites">
+    <!-- Author -->
+    <meta name="author" content="Kasiwebsites">
+    <!-- Robots -->
+    <meta name="robots" content="index, follow">
+    <!-- Open Graph Meta Tags for Social Media -->
+    <meta property="og:title" content="Kasiwebsites - Professional Web Development and Design Services">
+    <meta property="og:description" content="Kasiwebsites offers professional web development, design, graphic design, SEO, and maintenance services. Get custom solutions tailored to your business needs.">
+    <meta property="og:image" content="/images/kasimu.png">
+    <meta property="og:url" content="https://www.kasiwebsites.co.za">
+    <meta property="og:type" content="website">
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Kasiwebsites - Professional Web Development and Design Services">
+    <meta name="twitter:description" content="Kasiwebsites offers professional web development, design, graphic design, SEO, and maintenance services. Get custom solutions tailored to your business needs.">
+    <meta name="twitter:image" content="/images/kasimu.png">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Styles CSS -->
+    <link rel="stylesheet" href="/css/forms.css">
+    <link rel="stylesheet" href="/css/invoice.css">
     <link rel="stylesheet" href="/css/styles.css">
+    <!-- Company Title/Name -->
+    <title>Kasiwebsites</title> 
+    <!-- Search Icon -->
+    <link rel="icon" type="img/png" href="/images/kasimu.png">
+    <style>
+        #invoice-form, #signup-form, #login-form {
+            width: 60%;
+            margin: 0 auto;
+        }
+    </style>
 </head>
 <body>
-    <!-- Include your header/navbar if applicable -->
-    <header>
-        <h1>Welcome to Product App</h1>
-        <!-- Navigation links -->
-        <nav>
-            <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="/products">Products</a></li>
-                <!-- Add more navigation links as needed -->
-            </ul>
-        </nav>
+    <header id="header">
+        <!-- Navbar will be fetched and injected here -->
+        <% include partials/navbar %>
     </header>
-
     <main>
-        <h2>Featured Products</h2>
-        
-        <% products.forEach(product => { %>
-            <div class="product">
-                <img src="/images/<%= product.image %>" alt="<%= product.name %>">
-                <h3><%= product.name %></h3>
-                <p><%= product.description %></p>
-                <!-- Display price in Rand (R) -->
-                <p>Price: R <%= product.price.toLocaleString('en-ZA') %></p>
-                <!-- Add to cart form -->
-                <form action="/cart/add/<%= product._id %>" method="POST">
-                    <button type="submit">Add to Cart</button>
+        <h1>Welcome to Kasiwebsites</h1>
+        <section id="products">
+            <div class="container">
+                <h2>Products</h2>
+                <div id="product-list" class="grid-container">
+                    <!-- Product items will be dynamically loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <section id="cart">
+            <div class="container">
+                <h2>Cart</h2>
+                <div id="cart-items" class="grid-container">
+                    <!-- Cart items will be dynamically loaded here -->
+                </div>
+                <button id="checkout-btn" class="btn btn-primary">Checkout</button>
+            </div>
+        </section>
+
+        <!-- Sign Up Form -->
+        <section id="signup" style="display: none;">
+            <div class="container">
+                <h2>Sign Up</h2>
+                <form id="signup-form">
+                    <!-- Signup form content -->
+                    <div class="mb-3">
+                        <label for="new-email" class="form-label">Email address</label>
+                        <input type="email" class="form-control" id="new-email" name="new-email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="new-password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="new-password" name="new-password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Sign Up</button>
                 </form>
             </div>
-        <% }); %>
+        </section>
 
+        <!-- Login Form -->
+        <section id="login" style="display: none;">
+            <div class="container">
+                <h2>Login</h2>
+                <form id="login-form">
+                    <!-- Login form content -->
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email address</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Admin Invoice Form -->
+        <section id="admin-invoice" style="display: none;">
+            <div class="container">
+                <h2>Admin Dashboard</h2>
+                <form id="invoice-form">
+                    <!-- Admin invoice form content -->
+                    <div class="mb-3">
+                        <label for="customer-name" class="form-label">Customer Name</label>
+                        <input type="text" class="form-control" id="customer-name" name="customer-name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="customer-email" class="form-label">Customer Email</label>
+                        <input type="email" class="form-control" id="customer-email" name="customer-email" required>
+                    </div>
+                    <button type="button" id="generate-invoice" class="btn btn-primary">Generate Invoice</button>
+                    <button type="button" id="send-invoice" class="btn btn-secondary">Send Invoice</button>
+                    <a id="download-invoice-link" style="display: none;">Download Invoice</a>
+                </form>
+            </div>
+        </section>
     </main>
-
-    <!-- Include your footer -->
-    <footer>
-        <p>&copy; 2024 Your Company</p>
-        <!-- Social media icons or links -->
-        <ul class="social-icons">
-            <li><a href="#"><img src="/images/facebook.png" alt="Facebook"></a></li>
-            <li><a href="#"><img src="/images/twitter.png" alt="Twitter"></a></li>
-            <!-- Add more social icons as needed -->
-        </ul>
-        <!-- Back to top button -->
-        <a href="#top">Back to Top</a>
+    <footer id="footer">
+        <!-- Footer will be fetched and injected here -->
+        <% include partials/footer %>
     </footer>
 
-    <!-- JavaScript scripts if needed -->
-    <!-- Example: <script src="/js/main.js"></script> -->
+    <!-- JavaScript Links -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="/js/script.js"></script> <!-- Load your custom script.js -->
+    <!-- Bootstrap CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>
